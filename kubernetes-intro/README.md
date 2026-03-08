@@ -8,7 +8,7 @@
 ```bash 
 minikube start
 
-Ответ с сервера: 
+### Ответ с сервера: 
 
 😄  minikube v1.38.1 on Ubuntu 24.04 (amd64)
 ✨  Automatically selected the docker driver
@@ -30,6 +30,7 @@ minikube start
     ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
 🌟  Enabled addons: storage-provisioner, default-storageclass
 🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+
 
 2. Установка kubectl по инструкции: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
 
