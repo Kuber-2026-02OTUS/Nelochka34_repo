@@ -7,6 +7,7 @@
 
 ```bash 
 minikube start
+``` 
 
 ### Ответ с сервера: 
 
