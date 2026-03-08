@@ -10,7 +10,7 @@ minikube start
 ``` 
 
 ### Ответ с сервера: 
-
+```
 😄  minikube v1.38.1 on Ubuntu 24.04 (amd64)
 ✨  Automatically selected the docker driver
 ❗  Starting v1.39.0, minikube will default to "containerd" container runtime. See #21973 for more info.
@@ -31,18 +31,18 @@ minikube start
     ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
 🌟  Enabled addons: storage-provisioner, default-storageclass
 🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+```
 
-
-2. Установка kubectl по инструкции: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+2. Установка kubectl по инструкции: `https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/`
 
 Проверка установленной версии: 
 `kubectl version --client`
-
+```
 Client Version: v1.35.2
 Kustomize Version: v5.7.1
-
+```
 `kubectl version --client --output=yaml`
-
+```
 clientVersion:
   buildDate: "2026-02-26T20:05:34Z"
   compiler: gc
@@ -54,46 +54,60 @@ clientVersion:
   minor: "35"
   platform: linux/amd64
 kustomizeVersion: v5.7.1
-
+```
 3. Проверяю ноды: 
-
+```bash
 `kubectl get nodes`
-
+```
+### Ответ с сервера
+```
 NAME       STATUS   ROLES           AGE   VERSION
 minikube   Ready    control-plane   10m   v1.35.1
-
-Запускаю Манифест namespace.yaml для namespace с именем homework
-
+```
+### Запускаю Манифест namespace.yaml для namespace с именем homework
+```bash
 `kubectl apply -f namespace.yaml` 
-
+```
+```
 namespace/homework created
+```
 
-Проверка namespace: 
+###Проверка namespace: 
 
-`kubectl get ns`
-
+```bash
+kubectl get ns
+```
+### Ответ с сервера
+```
 NAME              STATUS   AGE
 default           Active   12m
 homework          Active   110s
 kube-node-lease   Active   12m
 kube-public       Active   12m
 kube-system       Active   12m
-
+```
 4. Создала манифест pod.yaml, запустила: 
 
-`kubectl apply -f pod.yaml` 
+```bash 
+kubectl apply -f pod.yaml
+``` 
 
-Проверила, что запустился: 
-
-`kubectl get pods -n homework`
+### Проверила, что запустился: 
+```bash
+kubectl get pods -n homework
+```
 
 Для проверки пробросила порт на свой хост: 
 
-`kubectl port-forward pod/homework-pod 8000:8000 -n homework`
+```bash
+kubectl port-forward pod/homework-pod 8000:8000 -n homework
+```
 
 Проверила ответ с хоста: 
 
-`curl -s http://localhost:8000`
+```bash 
+curl -s http://localhost:8000
+
 Получила ответ: 
 
 `<h1>Privet from Init Container!</h1>`
@@ -104,21 +118,27 @@ kube-system       Active   12m
 
 В другом терминале выполнила: 
 
-`curl -I http://localhost:8000`
+```bash
+curl -I http://localhost:8000
+```
 
 Получила: 
+```
 HTTP/1.0 200 OK
 Server: SimpleHTTP/0.6 Python/3.9.25
 Date: Sun, 08 Mar 2026 19:02:15 GMT
 Content-type: text/html
 Content-Length: 37
 Last-Modified: Sun, 08 Mar 2026 18:42:17 GMT
+```
 
 Выполнила: 
 
-`curl -s http://localhost:8000`
+```bash
+curl -s http://localhost:8000
+```
 Получила: 
-`<h1>Privet from Init Container!</h1>`
+```<h1>Privet from Init Container!</h1>```
 
 Убедилась, что работает. 
 
