@@ -1,6 +1,6 @@
 ## Выполнение ДЗ № 1
 
-1. Установка Minikube по инструкции: ```https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download```
+1. **Установка Minikube по инструкции:** ```https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download```
 
 Установка выполнена.  
 Запуск:  
@@ -9,7 +9,7 @@
 minikube start
 ``` 
 
-### Ответ с сервера: 
+#### Ответ с сервера: 
 ```text
 😄  minikube v1.38.1 on Ubuntu 24.04 (amd64)
 ✨  Automatically selected the docker driver
@@ -33,7 +33,7 @@ minikube start
 🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
 ```
 
-2. Установка kubectl по инструкции: `https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/`
+2. **Установка kubectl по инструкции:** `https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/`
 
 Проверка установленной версии: 
 ```bash 
@@ -59,29 +59,29 @@ clientVersion:
   platform: linux/amd64
 kustomizeVersion: v5.7.1
 ```
-3. Проверяю ноды: 
+3. **Проверяю ноды:** 
 ```bash
-`kubectl get nodes`
+kubectl get nodes
 ```
-### Ответ с сервера
+ Ответ с сервера
 ```
 NAME       STATUS   ROLES           AGE   VERSION
 minikube   Ready    control-plane   10m   v1.35.1
 ```
-### Запускаю Манифест namespace.yaml для namespace с именем homework
+Запускаю Манифест namespace.yaml для namespace с именем homework
 ```bash
-`kubectl apply -f namespace.yaml` 
+kubectl apply -f namespace.yaml 
 ```
 ```
 namespace/homework created
 ```
 
-###Проверка namespace: 
+Проверка namespace: 
 
 ```bash
 kubectl get ns
 ```
-### Ответ с сервера
+Ответ с сервера
 ```
 NAME              STATUS   AGE
 default           Active   12m
@@ -90,13 +90,13 @@ kube-node-lease   Active   12m
 kube-public       Active   12m
 kube-system       Active   12m
 ```
-4. Создала манифест pod.yaml, запустила: 
+4. **Создала манифест pod.yaml, запустила:** 
 
 ```bash 
 kubectl apply -f pod.yaml
 ``` 
 
-### Проверила, что запустился: 
+Проверила, что запустился: 
 ```bash
 kubectl get pods -n homework
 ```
@@ -114,7 +114,9 @@ curl -s http://localhost:8000
 
 Получила ответ: 
 
-`<h1>Privet from Init Container!</h1>`
+```text
+<h1>Privet from Init Container!</h1>
+````
 
 Иначе: 
 
@@ -127,7 +129,7 @@ curl -I http://localhost:8000
 ```
 
 Получила: 
-```
+```text
 HTTP/1.0 200 OK
 Server: SimpleHTTP/0.6 Python/3.9.25
 Date: Sun, 08 Mar 2026 19:02:15 GMT
@@ -142,7 +144,8 @@ Last-Modified: Sun, 08 Mar 2026 18:42:17 GMT
 curl -s http://localhost:8000
 ```
 Получила: 
-```<h1>Privet from Init Container!</h1>```
+```text
+<h1>Privet from Init Container!</h1>```
 
 Убедилась, что работает. 
 
