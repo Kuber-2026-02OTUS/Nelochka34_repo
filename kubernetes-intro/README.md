@@ -5,7 +5,7 @@
 Установка выполнена.  
 Запуск:  
 
-minikube start
+`minikube start`
 
 😄  minikube v1.38.1 on Ubuntu 24.04 (amd64)
 ✨  Automatically selected the docker driver
@@ -31,12 +31,12 @@ minikube start
 2. Установка kubectl по инструкции: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
 
 Проверка установленной версии: 
-`kubectl version --client
+`kubectl version --client`
 
 Client Version: v1.35.2
-Kustomize Version: v5.7.1`
+Kustomize Version: v5.7.1
 
-kubectl version --client --output=yaml
+`kubectl version --client --output=yaml`
 
 clientVersion:
   buildDate: "2026-02-26T20:05:34Z"
@@ -52,19 +52,20 @@ kustomizeVersion: v5.7.1
 
 3. Проверяю ноды: 
 
-kubectl get nodes
+`kubectl get nodes`
 
 NAME       STATUS   ROLES           AGE   VERSION
 minikube   Ready    control-plane   10m   v1.35.1
 
 Запускаю Манифест namespace.yaml для namespace с именем homework
 
-kubectl apply -f namespace.yaml 
+`kubectl apply -f namespace.yaml` 
+
 namespace/homework created
 
 Проверка namespace: 
 
-kubectl get ns
+`kubectl get ns`
 
 NAME              STATUS   AGE
 default           Active   12m
@@ -75,22 +76,22 @@ kube-system       Active   12m
 
 4. Создала манифест pod.yaml, запустила: 
 
-kubectl apply -f pod.yaml 
+`kubectl apply -f pod.yaml` 
 
 Проверила, что запустился: 
 
-kubectl get pods -n homework
+`kubectl get pods -n homework`
 
 Для проверки пробросила порт на свой хост: 
 
-kubectl port-forward pod/homework-pod 8000:8000 -n homework
+`kubectl port-forward pod/homework-pod 8000:8000 -n homework`
 
 Проверила ответ с хоста: 
 
-curl -s http://localhost:8000
+`curl -s http://localhost:8000`
 Получила ответ: 
 
-<h1>Privet from Init Container!</h1>
+`<h1>Privet from Init Container!</h1>`
 
 Иначе: 
 
@@ -98,7 +99,7 @@ curl -s http://localhost:8000
 
 В другом терминале выполнила: 
 
-curl -I http://localhost:8000
+`curl -I http://localhost:8000`
 
 Получила: 
 HTTP/1.0 200 OK
@@ -110,9 +111,9 @@ Last-Modified: Sun, 08 Mar 2026 18:42:17 GMT
 
 Выполнила: 
 
-curl -s http://localhost:8000
+`curl -s http://localhost:8000`
 Получила: 
-<h1>Privet from Init Container!</h1>
+`<h1>Privet from Init Container!</h1>`
 
 Убедилась, что работает. 
 
