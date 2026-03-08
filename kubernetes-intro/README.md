@@ -10,7 +10,7 @@ minikube start
 ``` 
 
 ### Ответ с сервера: 
-```
+```text
 😄  minikube v1.38.1 on Ubuntu 24.04 (amd64)
 ✨  Automatically selected the docker driver
 ❗  Starting v1.39.0, minikube will default to "containerd" container runtime. See #21973 for more info.
@@ -40,13 +40,13 @@ minikube start
 kubectl version --client
 ```
 Ответ: 
-```
+```text
 Client Version: v1.35.2
 Kustomize Version: v5.7.1
 ```
 `kubectl version --client --output=yaml`
 Ответ:
-```
+```text
 clientVersion:
   buildDate: "2026-02-26T20:05:34Z"
   compiler: gc
