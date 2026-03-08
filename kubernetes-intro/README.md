@@ -5,7 +5,10 @@
 Установка выполнена.  
 Запуск:  
 
-`minikube start`
+```bash 
+minikube start
+
+Ответ с сервера: 
 
 😄  minikube v1.38.1 on Ubuntu 24.04 (amd64)
 ✨  Automatically selected the docker driver
