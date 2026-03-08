@@ -3,8 +3,10 @@
 1. Установка Minikube по инструкции: https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download
 
 Установка выполнена.  
-Запуск: 
+Запуск:  
+
 minikube start
+
 😄  minikube v1.38.1 on Ubuntu 24.04 (amd64)
 ✨  Automatically selected the docker driver
 ❗  Starting v1.39.0, minikube will default to "containerd" container runtime. See #21973 for more info.
@@ -30,10 +32,12 @@ minikube start
 
 Проверка установленной версии: 
 `kubectl version --client
+
 Client Version: v1.35.2
 Kustomize Version: v5.7.1`
 
 kubectl version --client --output=yaml
+
 clientVersion:
   buildDate: "2026-02-26T20:05:34Z"
   compiler: gc
@@ -47,16 +51,21 @@ clientVersion:
 kustomizeVersion: v5.7.1
 
 3. Проверяю ноды: 
+
 kubectl get nodes
+
 NAME       STATUS   ROLES           AGE   VERSION
 minikube   Ready    control-plane   10m   v1.35.1
 
 Запускаю Манифест namespace.yaml для namespace с именем homework
+
 kubectl apply -f namespace.yaml 
 namespace/homework created
 
 Проверка namespace: 
+
 kubectl get ns
+
 NAME              STATUS   AGE
 default           Active   12m
 homework          Active   110s
@@ -65,23 +74,30 @@ kube-public       Active   12m
 kube-system       Active   12m
 
 4. Создала манифест pod.yaml, запустила: 
+
 kubectl apply -f pod.yaml 
 
 Проверила, что запустился: 
+
 kubectl get pods -n homework
 
 Для проверки пробросила порт на свой хост: 
+
 kubectl port-forward pod/homework-pod 8000:8000 -n homework
 
 Проверила ответ с хоста: 
+
 curl -s http://localhost:8000
 Получила ответ: 
+
 <h1>Privet from Init Container!</h1>
 
 Иначе: 
+
 Запустила k9s, зашла в нужный namespace. Убедилась, что нужный Pod запущен. Далее выделила под - shift+f Далее - ok. 
 
 В другом терминале выполнила: 
+
 curl -I http://localhost:8000
 
 Получила: 
@@ -93,6 +109,7 @@ Content-Length: 37
 Last-Modified: Sun, 08 Mar 2026 18:42:17 GMT
 
 Выполнила: 
+
 curl -s http://localhost:8000
 Получила: 
 <h1>Privet from Init Container!</h1>
