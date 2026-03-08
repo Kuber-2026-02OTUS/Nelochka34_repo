@@ -3,7 +3,7 @@
 1. **Установка Minikube по инструкции:** ```https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download```
 
 Установка выполнена.  
-Запуск:  
+Запуск minikube:  
 
 ```bash 
 minikube start
@@ -44,7 +44,9 @@ kubectl version --client
 Client Version: v1.35.2
 Kustomize Version: v5.7.1
 ```
-`kubectl version --client --output=yaml`
+```
+kubectl version --client --output=yaml
+```
 Ответ:
 ```text
 clientVersion:
@@ -63,7 +65,7 @@ kustomizeVersion: v5.7.1
 ```bash
 kubectl get nodes
 ```
- Ответ с сервера
+ Ответ с сервера:
 ```
 NAME       STATUS   ROLES           AGE   VERSION
 minikube   Ready    control-plane   10m   v1.35.1
@@ -72,7 +74,8 @@ minikube   Ready    control-plane   10m   v1.35.1
 ```bash
 kubectl apply -f namespace.yaml 
 ```
-```
+Ответ c сервера: 
+```text
 namespace/homework created
 ```
 
@@ -81,7 +84,7 @@ namespace/homework created
 ```bash
 kubectl get ns
 ```
-Ответ с сервера
+Ответ с сервера:
 ```
 NAME              STATUS   AGE
 default           Active   12m
@@ -114,11 +117,9 @@ curl -s http://localhost:8000
 
 Получила ответ: 
 
-```text
-<h1>Privet from Init Container!</h1>
-````
+`<h1>Privet from Init Container!</h1>`
 
-Иначе: 
+**Иначе:** 
 
 Запустила k9s, зашла в нужный namespace. Убедилась, что нужный Pod запущен. Далее выделила под - shift+f Далее - ok. 
 
@@ -145,9 +146,10 @@ curl -s http://localhost:8000
 ```
 Получила: 
 ```text
-<h1>Privet from Init Container!</h1>```
+<h1>Privet from Init Container!</h1>
+```
 
-Убедилась, что работает. 
+**Убедилась, что работает!** 
 
 
 
