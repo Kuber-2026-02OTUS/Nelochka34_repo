@@ -114,6 +114,7 @@ kubectl port-forward pod/homework-pod 8000:8000 -n homework
 
 ```bash 
 curl -s http://localhost:8000
+```
 
 Получила ответ: 
 
