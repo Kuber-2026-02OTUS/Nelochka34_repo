@@ -1,6 +1,9 @@
 ## Выполнение ДЗ № 1
 
-1. **Установка Minikube по инструкции:** ```https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download```
+1. **Установка Minikube по инструкции:** 
+```html
+https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download
+```
 
 Установка выполнена.  
 Запуск minikube:  
@@ -33,7 +36,10 @@ minikube start
 🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
 ```
 
-2. **Установка kubectl по инструкции:** `https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/`
+2. **Установка kubectl по инструкции:** 
+```html
+https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+```
 
 Проверка установленной версии: 
 ```bash 
