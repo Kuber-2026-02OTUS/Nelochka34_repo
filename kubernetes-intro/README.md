@@ -1,6 +1,6 @@
 ## Выполнение ДЗ № 1
 
-1. Установка Minikube по инструкции: https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download
+1. Установка Minikube по инструкции: ```https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download```
 
 Установка выполнена.  
 Запуск:  
@@ -36,12 +36,16 @@ minikube start
 2. Установка kubectl по инструкции: `https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/`
 
 Проверка установленной версии: 
-`kubectl version --client`
+```bash 
+kubectl version --client
+```
+Ответ: 
 ```
 Client Version: v1.35.2
 Kustomize Version: v5.7.1
 ```
 `kubectl version --client --output=yaml`
+Ответ:
 ```
 clientVersion:
   buildDate: "2026-02-26T20:05:34Z"
