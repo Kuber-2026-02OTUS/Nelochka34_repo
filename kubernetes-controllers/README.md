@@ -24,12 +24,23 @@ kube-system       Active   22m
 ```bash
 kubectl apply -f deployment.yaml
 ```
-Ответ с сервера:
+**Проверка:**
 ```bash
 kubectl get pods -n homework
 NAME                                   READY   STATUS    RESTARTS   AGE
 homework-deployment-75b8b77665-6w8nh   1/1     Running   0          28s
 homework-deployment-75b8b77665-hlr9n   1/1     Running   0          28s
 homework-deployment-75b8b77665-k827k   1/1     Running   0          28s
+```
+
+```bash
+kubectl get deploy -n homework
+NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
+homework-deployment   3/3     3            3           40m
+```
+
+```bash
+kubectl rollout status deployment homework-deployment -n homework
+deployment "homework-deployment" successfully rolled out
 ```
 
