@@ -39,9 +39,12 @@ kubectl get deploy -n homework
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
 homework-deployment   3/3     3            3           40m
 ```
-Статус процесса обновления deployment: 
+Статус процесса обновления deployment:
 ```bash
 kubectl rollout status deployment homework-deployment -n homework
+```
+Ответ:
+```
 deployment "homework-deployment" successfully rolled out
 ```
 
