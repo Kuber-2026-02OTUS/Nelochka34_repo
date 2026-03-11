@@ -1,6 +1,6 @@
 ## Выполнение ДЗ № 2
 
-1. **Создала namespace.yaml, запустила:**
+1. **Создала [`namespace.yaml`](namespace.yaml), запустила:**
 
 ```bash
 kubectl apply -f namespase.yaml
