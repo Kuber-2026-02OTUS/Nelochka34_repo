@@ -28,6 +28,9 @@ kubectl apply -f deployment.yaml
 Покажем все поды:
 ```bash
 kubectl get pods -n homework
+```
+Ответ:
+```bash
 NAME                                   READY   STATUS    RESTARTS   AGE
 homework-deployment-75b8b77665-6w8nh   1/1     Running   0          28s
 homework-deployment-75b8b77665-hlr9n   1/1     Running   0          28s
@@ -36,6 +39,9 @@ homework-deployment-75b8b77665-k827k   1/1     Running   0          28s
 Вывести все deployment в ns homework:
 ```bash
 kubectl get deploy -n homework
+```
+Ответ:
+```bash
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
 homework-deployment   3/3     3            3           40m
 ```
