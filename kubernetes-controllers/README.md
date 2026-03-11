@@ -18,7 +18,7 @@ kube-node-lease   Active   22m
 kube-public       Active   22m
 kube-system       Active   22m
 ```
-2. **Создала манифест deployment.yaml**
+2. **Создала манифест [`deployment.yaml`](deployment.yaml)**
 Запустила:
 ```bash
 kubectl apply -f deployment.yaml
