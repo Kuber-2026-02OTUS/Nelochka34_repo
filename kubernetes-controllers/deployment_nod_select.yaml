@@ -22,9 +22,9 @@ spec:
         app: web-server
 
     spec:
-      nodeSelector:      #Kub будет запускать Pod только на нодах, у которых есть lable
-          homework:"true"
-          
+      nodeSelector:
+        homework: "true"
+
       volumes:
         - name: shared-storage
           emptyDir: {}
