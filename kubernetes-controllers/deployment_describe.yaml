@@ -1,0 +1,61 @@
+apiVersion: apps/v1   #версия API Kubernetes
+kind: Deployment #тип ресурса Kubernetes (deployment это контроллер, который создает Pod, следит за состоянием, перезапускает, обновляет)
+metadata:
+  name: homework-deployment  #имя Deployment
+  namespace: homework # логическая изоляция ресурса
+
+spec:           #желаемое состояние обьекта
+  replicas: 3   #количество Pod
+
+  strategy:              #стратегия обновления
+    type: RollingUpdate  #тип обновления - постепенно, а не все сразу
+    rollingUpdate:
+      maxUnavailable: 1  #максимум 1 Pod может быть недоступен во время обновления
+
+  selector:              #Deployment должен находить Pod по label
+    matchLabels:
+      app: web-server    #Deployment управляет подом по этой метке
+
+  template:              #шаблон, который будет создавать Deployment
+    metadata:
+      labels:
+        app: web-server  #каждый под получает метку. Это для того, чтобы Deployment их находил, Service направлял трафик
+
+    spec:                #Спецификация Pod
+      volumes:
+        - name: shared-storage   #создается vokume - раздел. Это временное хранилище, создается при запуске пода, удаляется при удалении пода. Испрользуется для обмена данными между контейнерами.
+          emptyDir: {}           #тип.
+
+      initContainers:            #запускается перед основным контейнером
+        - name: init-content     #его имя
+          image: busybox:1.36    #образ
+          command: ['sh', '-c', 'echo "<h1>Privet from Init Container!</h1>" > /init/index.html']   #Контейнер выполныет команду - создает файл /init/index.html
+          volumeMounts:          #раздел подключается(монтируется) в контейнер
+            - name: shared-storage
+              mountPath: /init   #путь
+
+      containers:                #основной контейнер
+        - name: web-server       #имя контейнера
+          image: python:3.9-alpine   #образ
+          command: ['python', '-m', 'http.server', '8000', '--directory', '/homework']  #запускается http сервер, слушает 8000 порт, отдает файлы из /homework
+
+          ports:                 #порт контейнера
+            - containerPort: 8000
+
+          volumeMounts:          #раздел подключается(монтируется) в контейнер
+            - name: shared-storage
+              mountPath: /homework  #путь. поэтому файл /init/index.html теперь /homework/index.html
+
+          readinessProbe:   #проверка готовности контейнера
+            exec:
+              command:
+                - cat
+                - /homework/index.html #проверяется суествует ли файл
+            initialDelaySeconds: 5     #задержка 5с перед первой проверкой
+            periodSeconds: 10          #интервал проверки, проверка выполныется каждые 10с
+
+          lifecycle:
+            preStop:                   #команда выполняется перед остановкой контейнера
+              exec:
+                command: ["rm", "-f", "/homework/index.html"]  #ударяется файл
+
