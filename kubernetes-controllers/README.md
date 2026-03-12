@@ -86,7 +86,6 @@ kubectl get nodes --show-labels
 Такой метки нет.
 
 Как добавить метку:
-```
 ```bash
 kubectl label nodes minikube homework=true
 ```
