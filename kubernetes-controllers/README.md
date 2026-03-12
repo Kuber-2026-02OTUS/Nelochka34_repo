@@ -77,16 +77,14 @@ homework-deployment-5945dcfb5b-b9zc5   0/1     Pending   0          2m27s
 homework-deployment-5945dcfb5b-wbn5c   0/1     Pending   0          2m27s
 homework-deployment-5945dcfb5b-wwdl8   0/1     Pending   0          2m27s
 ```
-```text
 Все верно, kubernetes теперь запускает pod-ы только на нодах, у которых есть label (homework=true).
-```
+
 Проверить labels нод:
 ```bash
 kubectl get nodes --show-labels
 ```
 Такой метки нет.
 
-```text
 Как добавить метку:
 ```
 ```bash
@@ -100,7 +98,7 @@ kubectl apply -f deployment_nod_select.yaml
 ```bash
 kubectl get pods -n homework
 ```
-Ответ: 
+Ответ:
 ```bash
 NAME                                   READY   STATUS    RESTARTS   AGE
 homework-deployment-5945dcfb5b-b9zc5   1/1     Running   0          11m
