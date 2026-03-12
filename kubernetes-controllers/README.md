@@ -54,3 +54,56 @@ kubectl rollout status deployment homework-deployment -n homework
 deployment "homework-deployment" successfully rolled out
 ```
 
+3. **Задание со * **
+- сначала удалю прошлый deployment (удалятся все поды):
+```bash
+kubectl delete deployments.apps homework-deployment -n homework
+```
+проверка:
+```bash
+kubectl get pods -n homework
+No resources found in homework namespace.
+```
+- применяю новый манифест [`deployment_nod_select`](deployment_nod_select.yaml):
+```bash
+kubectl apply -f deployment_nod_select.yaml
+deployment.apps/homework-deployment created
+```
+Проверяю поды:
+```bash
+kubectl get pods -n homework
+NAME                                   READY   STATUS    RESTARTS   AGE
+homework-deployment-5945dcfb5b-b9zc5   0/1     Pending   0          2m27s
+homework-deployment-5945dcfb5b-wbn5c   0/1     Pending   0          2m27s
+homework-deployment-5945dcfb5b-wwdl8   0/1     Pending   0          2m27s
+```
+```text
+Все верно, kubernetes теперь запускает pod-ы только на нодах, у которых есть label (homework=true).
+```
+Проверить labels нод:
+```bash
+kubectl get nodes --show-labels
+```
+Такой метки нет.
+
+```text
+Как добавить метку:
+```
+```bash
+kubectl label nodes minikube homework=true
+```
+после добавления метки можем заново применить:
+```bash
+kubectl apply -f deployment_nod_select.yaml
+```
+Проверяем:
+```bash
+kubectl get pods -n homework
+```
+Ответ: 
+```bash
+NAME                                   READY   STATUS    RESTARTS   AGE
+homework-deployment-5945dcfb5b-b9zc5   1/1     Running   0          11m
+homework-deployment-5945dcfb5b-wbn5c   1/1     Running   0          11m
+homework-deployment-5945dcfb5b-wwdl8   1/1     Running   0          11m
+```
