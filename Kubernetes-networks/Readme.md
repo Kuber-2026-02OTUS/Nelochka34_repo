@@ -91,3 +91,11 @@ curl http://homework.otus:NodePort/index.html
 ```
 Доработанный манифест [`ingress_c.yaml`](ingress_c.yaml)
 
+Проверяю: 
+```bash
+curl -H "Host: homework.otus" http://localhost:8080/homepage
+```
+Вывод: 
+```bash
+<h1>Privet from Init Container!</h1>
+```
