@@ -59,4 +59,26 @@ ingress-nginx-controller-585578ff86-rh6pq   0/1     ContainerCreating   0       
 ```bash
 kubectl apply -f ingress.yaml
 ```
-
+Проверяю, что ingress создался: 
+```bash
+kubectl get ingress -n homework 
+```
+Ответ: 
+```
+NAME               CLASS   HOSTS           ADDRESS   PORTS   AGE
+homework-ingress   nginx   homework.otus             80      21s
+```
+Чтобы запрос работал с хоста провожу кое-какие манипуляции:
+- Чтобы адрес homework.otus резолвился на на хосте - в файл /etc/hosts добавила 
+```bash 
+127.0.0.1  homework.otus 
+```
+Ну и конечно запустила forward. 
+Далее для проверки запустила: 
+```bash 
+curl http://homework.otus:NodePort/index.html
+```
+Получила: 
+```bash 
+<h1>Privet from Init Container!</h1>
+```
