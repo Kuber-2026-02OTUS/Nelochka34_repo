@@ -22,3 +22,28 @@ curl localhost:8000/index.html
 <h1>Privet from Init Container!</h1>
 ```
 2. **Создала манифест [`service.yaml`](service.yaml)**
+Применила: 
+```bash
+kubectl apply -f service.yaml
+```
+Проверила сервис: 
+```bash
+kubectl get svc -n homework
+```
+Получила ответ: 
+```bash
+NAME               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+homework-service   ClusterIP   10.96.70.234   <none>        80/TCP    65s
+```
+Проверяю, что сервисы видят поды: 
+```bash
+kubectl get endpoints -n homework 
+```
+Ответ: 
+```bash
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+NAME               ENDPOINTS                                            AGE
+homework-service   10.244.0.21:8000,10.244.0.22:8000,10.244.0.23:8000   4m40s
+```
+
+
