@@ -45,5 +45,18 @@ Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointS
 NAME               ENDPOINTS                                            AGE
 homework-service   10.244.0.21:8000,10.244.0.22:8000,10.244.0.23:8000   4m40s
 ```
+3. **Установила в кластере ingress-контроллер nginx**
+```bash
+kubectl get pods -n ingress-nginx 
+```
+```bash
+NAME                                        READY   STATUS              RESTARTS   AGE
+ingress-nginx-controller-585578ff86-rh6pq   0/1     ContainerCreating   0          32s
+```
+4. **Создала манифест ingress.yaml, в котором описан объект типа ingress, направляющий все http запросы к хосту homework.otus на ранее созданный сервис. В результате запрос http://homework.otus/index.html  отдавает код html страницы, находящейся в Подах. **
 
+Манифест [`ingress.yaml`](ingress.yaml) применяю:
+```bash
+kubectl apply -f ingress.yaml
+```
 
