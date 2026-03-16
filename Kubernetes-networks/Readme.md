@@ -82,3 +82,12 @@ curl http://homework.otus:NodePort/index.html
 ```bash 
 <h1>Privet from Init Container!</h1>
 ```
+
+5. **Задание С**
+```text
+Доработай манифест ingress.yaml, описав в нем rewrite-правила
+так, чтобы обращение по адресу http://homework.otus/homepage
+Форвардилось на http://homework.otus/index.html
+```
+Доработанный манифест [`ingress_c.yaml`](ingress_c.yaml)
+
