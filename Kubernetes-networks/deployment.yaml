@@ -47,10 +47,9 @@ spec:
               mountPath: /homework
 
           readinessProbe:
-            exec:
-              command:
-                - cat
-                - /homework/index.html
+            httpGet:
+              path: /index.html
+              port: 8000
             initialDelaySeconds: 5
             periodSeconds: 10
 
