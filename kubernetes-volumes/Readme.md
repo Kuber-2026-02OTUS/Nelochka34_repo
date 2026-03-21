@@ -86,14 +86,12 @@ ubectl get pods -n homework
 Ответ с сервера: 
 ```bash 
 kubectl get pods -n homework 
-NAME                                   READY   STATUS    RESTARTS   AGE
-homework-deployment-7d98b4b665-4zxkr   0/1     Running   0          12s
-homework-deployment-7d98b4b665-78xw4   0/1     Running   0          12s
-homework-deployment-7d98b4b665-8m72m   0/1     Running   0          12s
+NAME                                  READY   STATUS    RESTARTS   AGE
+homework-deployment-dff494fdd-72sgh   0/1     Running   0          8s
 ```
 Проверяю (захожу в под): 
 ```bash
-kubectl exec -it homework-deployment-7d98b4b665-4zxkr -n homework -- sh
+kubectl exec -it homework-deployment-dff494fdd-72sgh -n homework -- sh
 ```
 смотрю внутри: 
 ```bash
@@ -102,3 +100,9 @@ index.html
  ```
 что и ожидалось! 
 
+
+4. **Задание: в манифесте deployment.yaml добавить монтирование
+ранее созданного configMap как volume к основному
+контейнеру пода в директории /homework/conf, так, чтобы
+его содержимое можно было получить, обратившись по url
+/conf/file**
