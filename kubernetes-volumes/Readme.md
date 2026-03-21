@@ -106,3 +106,28 @@ index.html
 контейнеру пода в директории /homework/conf, так, чтобы
 его содержимое можно было получить, обратившись по url
 /conf/file**
+
+Внесла изменения в манифест [`deployment_cm.yaml`](deployment_cm.yaml) (теперь  ConfifMap подключается как volume, смонтирован в контейнер в /homework/conf, файл открывается по url). 
+
+Применила созданный deployment: 
+```bash 
+kubectl apply -f deployment_cm.yaml -n homework 
+```
+Получила ответ: 
+```bash
+kubectl get pods -n homework 
+NAME                                  READY   STATUS    RESTARTS   AGE
+homework-deployment-9f9bd4559-6k47r   0/1     Running   0          5s
+```
+Убедилась, что welcome_message: "Hello world!" из cm.yaml станет внутри пода: 
+```bash 
+kubectl exec -it homework-deployment-9f9bd4559-6k47r -n homework -- sh
+
+/ # ls /homework/conf/
+app.properties   welcome_message
+
+/ # cat /homework/conf/welcome_message 
+Hello world!/ # 
+```
+
+
