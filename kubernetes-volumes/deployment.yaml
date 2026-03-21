@@ -5,7 +5,7 @@ metadata:
   namespace: homework
 
 spec:
-  replicas: 3
+  replicas: 1
 
   strategy:
     type: RollingUpdate
@@ -24,7 +24,8 @@ spec:
     spec:
       volumes:
         - name: shared-storage
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: my-pvc
 
       initContainers:
         - name: init-content

@@ -62,4 +62,43 @@ BinaryData
 Events:  <none>
 ```
 
+3. **Задание: в манифесте deployment.yaml изменить спецификацию
+volume типа emptyDir, который монтируется в init и
+основной контейнер, на pvc, созданный в предыдущем
+пункте**
+
+Внесла изменения в манифест [`deployment.yaml`](deployment.yaml) (теперь используется PVC, данные сохраняются, том общий для всех контейнеров в поде): 
+```bash
+spec:
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: my-pvc
+```
+Применяю: 
+```bash
+kubectl apply -f deployment.yaml -n homework 
+```
+Проверяю: 
+```bash
+ubectl get pods -n homework 
+```
+Ответ с сервера: 
+```bash 
+kubectl get pods -n homework 
+NAME                                   READY   STATUS    RESTARTS   AGE
+homework-deployment-7d98b4b665-4zxkr   0/1     Running   0          12s
+homework-deployment-7d98b4b665-78xw4   0/1     Running   0          12s
+homework-deployment-7d98b4b665-8m72m   0/1     Running   0          12s
+```
+Проверяю (захожу в под): 
+```bash
+kubectl exec -it homework-deployment-7d98b4b665-4zxkr -n homework -- sh
+```
+смотрю внутри: 
+```bash
+ls /homework/
+index.html
+ ```
+что и ожидалось! 
 
