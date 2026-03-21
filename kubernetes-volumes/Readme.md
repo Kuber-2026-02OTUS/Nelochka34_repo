@@ -131,3 +131,33 @@ Hello world!/ #
 ```
 
 
+5. **Задание С: создать манифест StorageClass.yaml, описывающий объект типа StorageClass с provisioner https://k8s.io/minikube-hostpath и reclaimPolicy Retain**
+
+Создала манифест [`storageClass.yaml`](storageClass.yaml), применила: 
+```bash
+kubectl apply -f storageClass.yaml 
+```
+Проверила: 
+```bash
+kubectl get storageclasses
+
+NAME                 PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+homework-storage     k8s.io/minikube-hostpath   Retain          Immediate           false                  23s
+```
+
+6. **Задание: изменить манифест pvc.yaml так, чтобы в нем запрашивалось хранилище созданного storageClass**
+
+Создала манифест [`pvc_sc.yaml`](pvc_sc.yaml), применила: 
+(для этого нужно было удалить старый pvc,  не удалялся, его держал deployment, пришлось удалить deployment, только потом применить pvc_sc.yaml)
+```bash
+kubectl apply -f pvc_sc.yaml -n homework 
+```
+Проверка: 
+```bash 
+kubectl get pvc -n homework 
+
+NAME     STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS       VOLUMEATTRIBUTESCLASS   AGE
+my-pvc   Bound    pvc-af36c2e2-55d7-4465-9fb8-882b59876853   3Gi        RWO            homework-storage   <unset>                 5m30s
+```
+Заметила, что в STORAGECLASS: homework-storage 
+
