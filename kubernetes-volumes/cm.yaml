@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+  namespace: homework
+data:
+  app.properties: |
+    log_level=info
+    max_connections=10
+  welcome_message: "Hello world!"
