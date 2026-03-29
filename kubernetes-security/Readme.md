@@ -43,7 +43,7 @@ kubectl get clusterrolebinding -n homework | grep monitoring
 monitoring-metrics-binding                                      ClusterRole/monitoring-metrics                                                     28m
 ```
 Можно проверить командой: 
-``bash
+```bash
 kubectl auth can-i get /metrics --as=system:serviceaccount:homework:monitoring
 ```
 Ответ: 
