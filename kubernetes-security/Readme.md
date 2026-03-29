@@ -18,6 +18,9 @@ kubectl apply -f ClusterRoleBinding.yaml -n homework
 1. Service Account
 ```bash 
 kubectl get sa -n homework 
+```
+Ответ:
+```bash
 NAME         AGE
 default      17d
 monitoring   6m24s
