@@ -67,11 +67,30 @@ homework-deployment-66784c9bb4-lr9pn   1/1     Running   0          4m31s
 ```
 Кроме того, можно увидеть в описании пода: 
 ```bash
-kubectl describe pods homework-deployment-66784c9bb4-lr9pn -n homework | grep mo
-nitoring
+kubectl describe pods homework-deployment-66784c9bb4-lr9pn -n homework | grep monitoring
 Service Account:  monitoring
 ```
 Под теперь использует Service Account, все обращения к API будут идти от имени monitoring. 
 
 
-**3. Задание: " "**
+**3. Задание: "В namespace homework создать service account с именем cd и дать ему роль admin в рамках namespace homework"**
+
+Создала service accaunt - cd [`sa-cd.yaml`](sa-cd.yaml) и запустила: 
+```bash
+kubectl apply -f sa-cd.yaml -n homework 
+```
+
+В Kubernetes уже есть role - admin. 
+
+Создаю и запускаю [`crbinding.yaml`](crbinding.yaml)
+``bash
+kubectl apply -f crbinding.yaml -n homework 
+```
+Проверка: 
+```bash
+kubectl auth can-i create pods --as=system:serviceaccount:homework:cd -n homework
+```
+Ответ: 
+```bash 
+yes
+```
