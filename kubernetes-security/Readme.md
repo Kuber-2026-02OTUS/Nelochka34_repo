@@ -1,5 +1,5 @@
 ## Выполнение ДЗ № 5
-1. Задание: "в namespace homework создать service account monitoring и дать ему доступ к эндпоинту /metrics кластера"
+**1. Задание: "в namespace homework создать service account monitoring и дать ему доступ к эндпоинту /metrics кластера"**
 
 Создала ServiceAccount: [`serviceAccount.yaml`](serviceAccount.yaml), 
 запустила: 
@@ -50,3 +50,28 @@ kubectl auth can-i get /metrics --as=system:serviceaccount:homework:monitoring
 ```bash 
 yes
 ```
+
+**2. Задание: "изменить манифест deployment из прошлых ДЗ так, чтобы поды запускались под service account monitoring"**
+
+Внесла изменения в [`deployment.yaml`](deployment.yaml)
+
+Применила: 
+```bash
+kubectl apply -f deployment.yaml -n homework 
+```
+Проверка: 
+```bash
+kubectl get pods -n homework 
+NAME                                   READY   STATUS    RESTARTS   AGE
+homework-deployment-66784c9bb4-lr9pn   1/1     Running   0          4m31s
+```
+Кроме того, можно увидеть в описании пода: 
+```bash
+kubectl describe pods homework-deployment-66784c9bb4-lr9pn -n homework | grep mo
+nitoring
+Service Account:  monitoring
+```
+Под теперь использует Service Account, все обращения к API будут идти от имени monitoring. 
+
+
+**3. Задание: " "**
