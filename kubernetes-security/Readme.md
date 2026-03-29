@@ -83,7 +83,7 @@ kubectl apply -f sa-cd.yaml -n homework
 В Kubernetes уже есть role - admin. 
 
 Создаю и запускаю [`crbinding.yaml`](crbinding.yaml)
-``bash
+```bash
 kubectl apply -f crbinding.yaml -n homework 
 ```
 Проверка: 
