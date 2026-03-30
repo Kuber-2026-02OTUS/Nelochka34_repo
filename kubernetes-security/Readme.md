@@ -139,3 +139,7 @@ yes
 ```bash
 kubectl create token cd -n homework --duration=24h > token
 ```
+
+**6. Задание: "модифицировать deployment.yaml так, чтобы в процессе запуска pod происходило обращение к endpoint /metrics кластера (механика вызова не принципиальна), результат ответа сохранялся в файл metrics.html и содержимое этого файла можно было бы получить при обращении по адресу /metrics.html сервиса"**
+
+Создала файл [`deployment.yaml`](task_C/deployment.yaml)
