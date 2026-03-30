@@ -131,3 +131,11 @@ KUBECONFIG=cd-kubeconfig.yaml kubectl auth can-i create pods
 yes
 ```
 Т.о пользователь cd имеет доступ к ns homework без доступа к кластеру целиком. 
+
+
+**5. Задание: "Сгенерировать для service account cd токен с временем действия 1 день и сохранить его в файл token"**
+
+Получила токен для ServiceAccount - cd, ns - homework, срок жизни - 24h, сохранила в файл: 
+```bash
+kubectl create token cd -n homework --duration=24h > token
+```
