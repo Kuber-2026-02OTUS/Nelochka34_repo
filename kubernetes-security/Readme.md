@@ -130,3 +130,4 @@ homework-deployment-66784c9bb4-lr9pn   1/1     Running   0          13h
 KUBECONFIG=cd-kubeconfig.yaml kubectl auth can-i create pods
 yes
 ```
+Т.о пользователь cd имеет доступ к ns homework без доступа к кластеру целиком. 
