@@ -135,4 +135,5 @@ uis79PmUJnJLzjFKDcy9HmFKmaILRrc0DajhbAL30pF4t1OWZEGamhwkgMGNIfaO
 Ba4hfdxlODe0hiZ90wg0+F8IV6DDAQir5YKvP02Dfier8vSqOZfCUPpgwvoQyWHn
 rC2hX8pxt8qG2g==
 ```
-Теперь используя эти параметры я создала service accaunt - cd [`sa-cd.yaml`](sa-cd.yaml) и запустила: 
+Теперь используя эти параметры я создала service accaunt - cd [`cd-kubeconfig.yaml`](cd-kubeconfig.yaml) и запустила: 
+```bash
