@@ -143,3 +143,28 @@ kubectl create token cd -n homework --duration=24h > token
 **6. Задание: "модифицировать deployment.yaml так, чтобы в процессе запуска pod происходило обращение к endpoint /metrics кластера (механика вызова не принципиальна), результат ответа сохранялся в файл metrics.html и содержимое этого файла можно было бы получить при обращении по адресу /metrics.html сервиса"**
 
 Создала файл [`deployment.yaml`](task_C/deployment.yaml)
+
+Применила. Проверяю: 
+```bash 
+ubectl get pods -n homework 
+NAME                                   READY   STATUS    RESTARTS   AGE
+homework-deployment-64df569fdb-7jc7d   1/1     Running   0          2m34s
+```
+=> под поднялся!
+
+Проерим, что файл создался: 
+```bash
+kubectl exec -it homework-deployment-64df569fdb-7jc7d -n homework -- sh
+Defaulted container "web-server" out of: web-server, init-content (init), fetch-metrics (init)
+/ # ls /homework/
+index.html    metrics.html
+```
+ПРоверяем с браузера: 
+```bash
+curl http://localhost:8000/
+```
+Ответ: 
+```bash
+<h1>Privet from Init Container!</h1>
+```
+а также в браузере (при запросе: http://localhost:8000) появился ответ: Privet from Init Container!
