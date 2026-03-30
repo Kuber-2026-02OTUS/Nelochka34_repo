@@ -115,25 +115,18 @@ server: https://192.168.49.2:8443
 ```
 Получаю CA сертификат (он у меня по информации из kubectl config view --minify в каталоге): 
  ```bash
- cat /home/nela/.minikube/ca.crt
+ cat /home/nela/.minikube/ca.crt > ca.crt
  ```
- Получила сертификат: 
- ```bash
-AxMKbWluaWt1YmVDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAPYZ
-qiNtr/g+U8Y1ORtXRwkogvfIwCmjVi/bpz+LxJ9812Vt8+rLGh7SHRusLKQDRlGX
-ESNfpDUmP6COrf7Mq8ToODM78glX6d1b3m3mmj2ba3TP0DY1FwNclOmmumz+8vTw
-R6MvvSyE+Lo9kEqONyafQUZIAdDYH+bL05jK56ggNzYuEdCgJSDEnTtnF3g8hHhd
-EZigptkQaW9doeGLHTrHMhT8LXprmApR/8uT/vlLsAfO85+KdoIFdIqdQQWJlndK
-Hhgslgb0wdyYPzDsp6TyaBzwz/iHkbzu3zRrOYmZaNT8M5Kgg6Pw0fBfh580wInt
-nj2EZY6MCyQ7uz9j9Y8CAwEAAaNhMF8wDgYDVR0PAQH/BAQDAgKkMB0GA1UdJQQW
-MBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQW
-BBQ7H5yQ9sExAaD+HTYSJEv9qF4uTTANBgkqhkiG9w0BAQsFAAOCAQEA4H2oUwSU
-Wxb/+A1s0d/UXZW0KQh4H4OW3D80sC0xLEETkODng+884COPYyhJlgbO67tKbuIS
-JEeYeUkLAfc9jlSfLdmPbKYVwgM662XAFCGYyWNjhDlHC7Ha0E5Im5BTwvqKWGtA
-ZWTHoh6CxzZL9hGDxyXN1xTKf0CCU4go7itctBoIz/q3j1WL8WykA/2b0sF5y0qz
-uis79PmUJnJLzjFKDcy9HmFKmaILRrc0DajhbAL30pF4t1OWZEGamhwkgMGNIfaO
-Ba4hfdxlODe0hiZ90wg0+F8IV6DDAQir5YKvP02Dfier8vSqOZfCUPpgwvoQyWHn
-rC2hX8pxt8qG2g==
-```
+ 
 Теперь используя эти параметры я создала service accaunt - cd [`cd-kubeconfig.yaml`](cd-kubeconfig.yaml) и запустила: 
+Проверяю: 
 ```bash
+KUBECONFIG=cd-kubeconfig.yaml kubectl get pods -n homework
+NAME                                   READY   STATUS    RESTARTS   AGE
+homework-deployment-66784c9bb4-lr9pn   1/1     Running   0          13h
+```
+Проверка прав: 
+```bash
+KUBECONFIG=cd-kubeconfig.yaml kubectl auth can-i create pods
+yes
+```
