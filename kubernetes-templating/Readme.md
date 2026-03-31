@@ -50,6 +50,7 @@ tree
 4 directories, 11 files
 ```
 Создала: 
+
 2. [`values.yaml`](homework-chart/values.yaml)
     - repository и tag разделены согласно заданию
     - все параметры венесены наружу
@@ -120,3 +121,34 @@ deployment.apps/homework-deployment   2/2     2            2           13h
 NAME                                             DESIRED   CURRENT   READY   AGE
 replicaset.apps/homework-deployment-6df4d4d58f   2         2         2       13h
 ```
+Поды - Running 
+Сервис - запущен
+
+Ingress:
+```bash
+kubectl get ingress -n homework
+```
+```bash
+NAME               CLASS   HOSTS        ADDRESS   PORTS   AGE
+homework-ingress   nginx   test.local             80      13h
+```
+
+Сделав форводинг: 
+```bash
+kubectl port-forward svc/homework-service 8080:80 -n homework
+```
+Могу открыть в браузере: 
+```bash
+http://localhost:8080
+```
+Получаю: 
+```bash
+<h1>Privet from Init Container!</h1>
+```
+
+Проверяю Helm notes: 
+```bash
+helm status homework 
+```
+Получаю текст из NOTES.txt
+
