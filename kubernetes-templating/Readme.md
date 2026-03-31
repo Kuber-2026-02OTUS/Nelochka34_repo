@@ -49,6 +49,7 @@ tree
 
 4 directories, 11 files
 ```
+Создала: 
 2. [`values.yaml`](homework-chart/values.yaml)
     - repository и tag разделены согласно заданию
     - все параметры венесены наружу
@@ -57,12 +58,20 @@ tree
 5. [`service.yaml`](homework-chart/templates/service.yaml)
 6. [`ingress.yaml`](homework-chart/templates/ingress.yaml)
 7. [`NOTES.txt`](homework-chart/templates/NOTES.txt)
-8. 
+8. [`Chart.yaml`](homework-chart/Chart.yaml) - добавление зависимостей
 
+Подтянула зависисмости: 
+```bash 
+helm dependency update
+```
+В результате в каталоге charts/ появился архив с Redis chart. 
+
+Установила: 
 ```bash
 helm install homework ./homework-chart   --set replicaCount=2   --set ingress.host=test.local
 ```
-```
+Получила: 
+```bash
 NAME: homework
 LAST DEPLOYED: Mon Mar 30 22:02:49 2026
 NAMESPACE: default
@@ -84,3 +93,30 @@ kubectl port-forward svc/homework-service 8080:80
 http://localhost:8080
 ```
 
+Проверяю Helm релиз: 
+```bash
+helm list 
+```
+Получила: 
+```bash
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+homework        default         1               2026-03-30 22:02:49.22700224 +0300 MSK  deployed        homework-chart-0.1.0    1.16.0 
+```
+Смотрю, что создалось в Kubernetes:
+```bash 
+kubectl get all -n homework 
+```
+Получила: 
+```bash
+pod/homework-deployment-6df4d4d58f-s4j88   1/1     Running   1 (2m56s ago)   13h
+pod/homework-deployment-6df4d4d58f-zj5w2   1/1     Running   1 (2m56s ago)   13h
+
+NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
+service/homework-service   ClusterIP   10.101.114.141   <none>        80/TCP    13h
+
+NAME                                  READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/homework-deployment   2/2     2            2           13h
+
+NAME                                             DESIRED   CURRENT   READY   AGE
+replicaset.apps/homework-deployment-6df4d4d58f   2         2         2       13h
+```
