@@ -160,13 +160,39 @@ helm status homework
     - должна быть установлена kafka версии 3.5.2
     - для клиентских и межброкерных взаимодействий должен быть использован протокол SASL_PLAINTEXT
 
-    
-1.  Создала namespace prod: 
+
+ Создала namespace prod: 
 ```bash
 kubectl create namespace prod
 ```
 В публичных Docker Hub репозиториях раньше были образы Bitnami Kafka для 3.5.x, но они либо недоступны, либо удалены, поэтому docker pull bitnami/kafka:3.5.2… выдаёт manifest unknown. 
 
 Bitnami chart сейчас НЕЛЬЗЯ использовать бесплатно!
+
+Но, можно Bitnami legacy
+
+```bash
+helm install kafka . \
+  --namespace prod \
+  --create-namespace \
+  --set kraft.enabled=false \
+  --set zookeeper.enabled=true \
+  --set controller.replicaCount=0 \
+  --set broker.replicaCount=5 \
+  --set auth.enabled=true \
+  --set auth.clientProtocol=SASL_PLAINTEXT \
+  --set auth.interBrokerProtocol=SASL_PLAINTEXT \
+  --set persistence.enabled=false \
+  --set image.repository=bitnamilegacy/kafka \
+  --set image.tag=3.5.2-debian-12-r30
+  ```
+Но для установки старой версии Kafka пришлось скачать и установить старую версию Chart: 
+```bash
+helm pull oci://registry-1.docker.io/bitnamicharts/kafka --version 25.3.5
+```
+```bash 
+tar -xzf kafka-25.3.5.tgz
+cd kafka/
+```
 
 
