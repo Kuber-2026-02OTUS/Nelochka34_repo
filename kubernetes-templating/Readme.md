@@ -194,5 +194,18 @@ helm pull oci://registry-1.docker.io/bitnamicharts/kafka --version 25.3.5
 tar -xzf kafka-25.3.5.tgz
 cd kafka/
 ```
+Вторая часть задания: 
+    установить Kafka. Релиз должен иметь следующие параметры: установлен в namespace dev, должен быть развернут 1 брокер, должна быть установлена последняя доступная версия Kafka, для клиентских межброкерных взаимодействий должен быть использован протокол PLAINTEXT, авторизация для подключения к кластеру отключена. 
 
+    ```bash
+    kubectl create namespace dev
+    ```
+    Установила Kafka через OCI-реестр (последняя версия)
+    ```bash
+    helm install kafka-dev \
+  oci://registry-1.docker.io/bitnamicharts/kafka \
+  -f kafka-values.yaml \
+  -n dev \
+  --wait --timeout 10m
+  ```
 
