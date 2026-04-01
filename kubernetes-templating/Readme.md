@@ -161,3 +161,12 @@ helm status homework
     - для клиентских и межброкерных взаимодействий должен быть использован протокол SASL_PLAINTEXT
 
     
+1.  Создала namespace prod: 
+```bash
+kubectl create namespace prod
+```
+В публичных Docker Hub репозиториях раньше были образы Bitnami Kafka для 3.5.x, но они либо недоступны, либо удалены, поэтому docker pull bitnami/kafka:3.5.2… выдаёт manifest unknown. 
+
+Bitnami chart сейчас НЕЛЬЗЯ использовать бесплатно!
+
+
