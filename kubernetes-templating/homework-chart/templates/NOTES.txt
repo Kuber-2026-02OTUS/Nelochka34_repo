@@ -1,0 +1,12 @@
+Приложение успешно установлено!
+
+Открой в браузере:
+
+http://{{ .Values.ingress.host }}
+
+Или если ingress выключен:
+
+kubectl port-forward svc/{{ .Release.Name }}-service 8080:{{ .Values.service.port }}
+
+И открой:
+http://localhost:8080

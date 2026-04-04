@@ -1,0 +1,25 @@
+namespace: homework
+
+replicaCount: 3
+
+image:
+  repository: python
+  tag: "3.9-alpine"
+
+initContainer:
+  image:
+    repository: busybox
+    tag: "1.36"
+
+service:
+  port: 80
+  targetPort: 8000
+
+ingress:
+  enabled: true
+  host: homework.otus
+
+probes:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
