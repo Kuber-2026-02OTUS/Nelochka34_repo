@@ -35,7 +35,7 @@ mysql                               my           otus.homework/v1               
 в соответствии с этим создала новый манифест: 
 Манифест [`crd2.yaml`](crd2.yaml) создан и применен: 
 удалила прошлый, применила этот
-```bash 
+
 ```bash
 kubectl apply -f crd2.yaml 
 ```
