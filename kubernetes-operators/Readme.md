@@ -52,14 +52,53 @@ kubectl apply -f sa.yaml
 kubectl apply -f cr.yaml 
 kubectl apply -f crb.yaml 
 ```
-Проверка прав: 
+Проверка:
 ```bash
-kubectl auth can-i --as=system:serviceaccount:default:mysql-sa '*' '*'
+kubectl get sa
+NAME                            AGE
+default                         3h56m
+mysql-operator-sa               32s
 ```
-Ответ: yes
+```bash
+get clusterrole | grep mysql
+mysql-operator-role                                                    2026-04-04T20:48:59Z
+```
+```bash
+kubectl get clusterrolebinding | grep mysql
+mysql-operator-binding                                          ClusterRole/mysql-operator-role                                                    2m19s
+```
 
 4. **Задание: Создать манифест deployment  для оператора, указав созданный ранее ServiceAccount и образ roflmaoinmysoul/mysql-operator:1.0.0**
 
-Создала и запустила: [`deployment.yaml`](deployment.yaml) 
+Буду использовать образ percona/percona-server-mysql-operator:1.0.0, потому что у меня архитектура aarch64 и на этой архитектуре roflmaoinmysoul/mysql-operator:1.0.0 не работает. 
 
+Создала и запустила: [`deployment.yaml`](deployment.yaml) 
+Проверка: 
 ```bash
+kubectl get pods -n default 
+NAME                                             READY   STATUS    RESTARTS   AGE
+percona-server-mysql-operator-6b689f4f4c-775p4   1/1     Running   0          6m38s
+```
+
+5. **Задание: Создать манифест кастомного объекта kind: MySQL валидный для применения (см. атрибуты CRD созданного ранее)**
+
+обязательные поля:
+	•	image — Docker-образ MySQL
+	•	database — имя базы
+	•	password — пароль
+	•	storage_size — размер хранилища
+
+Создала и запустила: [`mysql_instance.yaml`](mysql_instance.yaml) 
+
+Проверка: 
+```bash
+kubectl get mysqls -n default 
+NAME         AGE
+example-db   35s
+```
+Все манифесты применила и убедилась, что все работатет. 
+CRD создался. Оператор работает и при создании кастомного ресурса. При удалении объекта - все удаляется: 
+```bash
+kubectl delete mysql example-db -n default
+mysql.otus.homework "example-db" deleted from default namespace
+```
