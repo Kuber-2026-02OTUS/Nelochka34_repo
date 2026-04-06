@@ -28,7 +28,7 @@ helm install prometheus-operator prometheus-community/kube-prometheus-stack \
   --namespace monitoring \
   --create-namespace
 ```
-ПРоверка: 
+Проверка: 
 ```bash
 kubectl get pods -n monitoring 
 NAME                                                      READY   STATUS    RESTARTS   AGE
@@ -44,7 +44,7 @@ prometheus-prometheus-operator-kube-p-prometheus-0        2/2     Running   0   
 kubectl port-forward svc/prometheus-operator-grafana 3000:80 -n monitoring
 kubectl port-forward svc/prometheus-operated 9090:9090 -n monitoring
 ```
-Теперь локадьно запускаются: 
+Теперь локально запускаются: 
 ```bash
 http://localhost:9090 # prometheus
 http://localhost:3000/ # grafana
@@ -53,7 +53,7 @@ http://localhost:3000/ # grafana
 ```bash
 kubectl get secret prometheus-operator-grafana -n monitoring -o jsonpath="{.data.admin-password}" | base64 --decode
 ```
-Выполнила вход, сменила пароь в Grafana (admin/admin)
+Выполнила вход, сменила пароль в Grafana (admin/admin)
 
 ![Вход в Grafana](grafana.png)
 ![Вход в Prometeus](prometeus.png)
