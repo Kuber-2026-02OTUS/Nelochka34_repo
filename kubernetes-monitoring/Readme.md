@@ -112,3 +112,22 @@ kubectl port-forward svc/nginx-exporter 9113:9113
 - открываю в браузере: 
 ![nginx-exp](nginx-exp.png)
 
+**Задание 5: создать манифест serviceMonitor, описывающий сбор метрик с подов, которые я создала**
+
+Создала и запустила: [`serviceMonitor.yaml`](serviceMonitor.yaml)
+
+Проверяю: 
+```bash
+kubectl get servicemonitors -n monitoring 
+NAME                                                 AGE
+nginx-exporter                                       26s
+```
+Аналогично, делаю форвардинг, открываю в браузере. 
+Открывается Prometeus: 
+```bas
+http://localhost:9090
+``` 
+Проверяю, что все работает: 
+![Prometeus](Prom-2.png)
+
+аналогично с Grafana. 
