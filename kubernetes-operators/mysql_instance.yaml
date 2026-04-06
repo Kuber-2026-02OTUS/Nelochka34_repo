@@ -1,0 +1,10 @@
+apiVersion: otus.homework/v1
+kind: MySQL
+metadata:
+  name: example-db
+  namespace: default
+spec:
+  image: mysql:8.0
+  database: example
+  password: examplepass
+  storage_size: 1Gi
