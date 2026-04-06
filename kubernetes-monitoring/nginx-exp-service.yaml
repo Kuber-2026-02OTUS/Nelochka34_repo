@@ -7,6 +7,7 @@ spec:
   selector:
     app: nginx-exporter
   ports:
-    - port: 9113
+    - name: http
+      port: 9113
       targetPort: 9113
   type: ClusterIP
