@@ -53,12 +53,31 @@ http://localhost:3000/ # grafana
 ```bash
 kubectl get secret prometheus-operator-grafana -n monitoring -o jsonpath="{.data.admin-password}" | base64 --decode
 ```
-зашла, сменила (admin/admin)
+Выполнила вход, сменила пароь в Grafana (admin/admin)
+
 ![Вход в Grafana](grafana.png)
 ![Вход в Prometeus](prometeus.png)
 
+**Задание 3: создать deployment, запускающий мой кастомный nginx образ и service для него**
 
-Создала [`nginx.conf`](nginx.conf)
+Создала [`deployment.yaml`](deployment.yaml), [`service.yaml`](service.yaml), запустила. Проверила: 
+```bash
+kubectl get pods 
+NAME                                             READY   STATUS    RESTARTS   AGE
+custom-nginx-bd94cc6cf-x7ltd                     1/1     Running   0          23s
+
+kubectl get svc
+NAME           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+custom-nginx   ClusterIP   10.110.169.98   <none>        8080/TCP   51s
+kubernetes     ClusterIP   10.96.0.1       <none>        443/TCP    42h
+```
+Пробросила порт на лок хост: 
+```bash
+kubectl port-forward svc/custom-nginx 8080:8080
+```
+При открытии страницы в браузере curl http://localhost:8080/metrics , убедилась, что возвращается: Hello from custom nginx. 
+
+
 
 
 2. [`values.yaml`](homework-chart/values.yaml)
