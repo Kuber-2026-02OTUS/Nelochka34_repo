@@ -75,10 +75,38 @@ kubernetes     ClusterIP   10.96.0.1       <none>        443/TCP    42h
 ```bash
 kubectl port-forward svc/custom-nginx 8080:8080
 ```
-При открытии страницы в браузере curl http://localhost:8080/metrics , убедилась, что возвращается: Hello from custom nginx. 
+При открытии страницы в браузере curl http://localhost:8080/metrics , убедилась, что возвращается: *Hello from custom nginx*. 
 
 
+**Задание 4: Настроить запуск nginx prometheus exporter (отдельно подом или в составе пода nginx - не принципиально) и сконфигурировать его для сбора метрик с nginx** 
 
+Использую вариант с отдельным Pod-ом. 
+Создала [`nginx-expl-deployment.yaml`](nginx-expl-deployment.yaml)
 
-2. [`values.yaml`](homework-chart/values.yaml)
-   
+Установила: 
+   - containerPort: 9113
+   - custom-nginx — это имя Service
+
+Создала [`nginx-exp-service.yaml`](nginx-exp-service.yaml)
+Применила. 
+Проверяю: 
+```bash 
+kubectl get pods
+NAME                                             READY   STATUS    RESTARTS   AGE
+custom-nginx-bd94cc6cf-x7ltd                     1/1     Running   0          3h22m
+nginx-exporter-6dbcfb7464-p7cfs                  1/1     Running   0          10m
+```
+
+```bash
+kubectl get svc
+NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+custom-nginx     ClusterIP   10.110.169.98   <none>        8080/TCP   3h5m
+kubernetes       ClusterIP   10.96.0.1       <none>        443/TCP    45h
+nginx-exporter   ClusterIP   10.111.56.142   <none>        9113/TCP   58s
+```
+Проверяю работу exporter: 
+- port-forward
+```bash
+kubectl port-forward svc/nginx-exporter 9113:9113
+```
+- открываю в браузере: 
