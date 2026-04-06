@@ -54,7 +54,8 @@ http://localhost:3000/ # grafana
 kubectl get secret prometheus-operator-grafana -n monitoring -o jsonpath="{.data.admin-password}" | base64 --decode
 ```
 зашла, сменила (admin/admin)
-
+![Вход в Grafana](grafana.png)
+![Вход в Prometeus](prometeus.png)
 
 
 Создала [`nginx.conf`](nginx.conf)
