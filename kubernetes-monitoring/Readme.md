@@ -110,3 +110,5 @@ nginx-exporter   ClusterIP   10.111.56.142   <none>        9113/TCP   58s
 kubectl port-forward svc/nginx-exporter 9113:9113
 ```
 - открываю в браузере: 
+![nginx-exp](nginx-exp.png)
+
