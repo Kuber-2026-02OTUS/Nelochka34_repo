@@ -198,8 +198,185 @@ cl1t8pdv6rtd4oqb6ekr-ahav   Ready    <none>   163m   v1.32.1
 ```bash
 kubectl create namespace monitoring
 ```
-Добавила Helm repo
+Установила:
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 ```
+
+Создала файл [`loki-values.conf`](loki-values.conf). 
+
+Установила Loki: 
+```bash
+helm install loki grafana/loki-stack \
+  --namespace monitoring \
+  -f loki-values.yaml
+```
+Получила: 
+```
+level=WARN msg="this chart is deprecated"
+NAME: loki
+LAST DEPLOYED: Thu Apr 16 10:54:23 2026
+NAMESPACE: monitoring
+STATUS: deployed
+REVISION: 1
+DESCRIPTION: Install complete
+NOTES:
+The Loki stack has been deployed to your cluster. Loki can now be added as a datasource in Grafana.
+
+See http://docs.grafana.org/features/datasources/loki/ for more detail.
+```
+Проверка подов: 
+```bash
+kubectl get pods -n monitoring -o wide
+
+NAME                  READY   STATUS             RESTARTS   AGE     IP              NODE                        NOMINATED NODE   READINESS GATES
+loki-0                0/1     Pending            0          2m54s   <none>          <none>                      <none>           <none>
+loki-promtail-jc6cd   0/1     ImagePullBackOff   0          2m54s   10.112.128.20   cl1ra8oqg7nmt1ugih06-ofyf   <none>           <none>
+```
+
+Для того, чтобы был доступ в Инетренет на нодах я дела NAT geteway: 
+```bash
+yc vpc gateway create --name nat-gw
+
+id: enpkq1ue1jtl4q6v5akj
+folder_id: b1gbocdespuklnjtfkbf
+created_at: "2026-04-16T08:18:46Z"
+name: nat-gw
+shared_egress_gateway: {}
+```
+```bash
+yc vpc route-table create \
+  --name nat-route \
+  --network-name nela-vlg \
+  --route destination=0.0.0.0/0,gateway-id=enpkq1ue1jtl4q6v5akj
+  ```
+  Ответ: 
+  ```bash
+  id: enpuuo3uuplk3lmctrua
+folder_id: b1gbocdespuklnjtfkbf
+created_at: "2026-04-16T08:19:41Z"
+name: nat-route
+network_id: enp4ef8na7n298bulrql
+static_routes:
+  - destination_prefix: 0.0.0.0/0
+    gateway_id: enpkq1ue1jtl4q6v5akj
+```
+Пересоздаю node group: 
+```bash
+yc managed-kubernetes node-group delete workload-nodes 
+
+yc managed-kubernetes node-group create \
+  --cluster-name my-k8s-cluster \
+  --name workload-nodes \
+  --platform-id standard-v3 \
+  --fixed-size 1 \
+  --cores 2 \
+  --memory 4 \
+  --disk-size 64 \
+  --location zone=ru-central1-b,subnet-id=e2lqj86jtcob2m7e1m0s \
+  --node-labels role=workload
+  ```
+  Получаю NAT gateway id
+  ```bash
+  NAT gateway id
+  yc vpc gateway list
++----------------------+--------+-------------+
+|          ID          |  NAME  | DESCRIPTION |
++----------------------+--------+-------------+
+| enpkq1ue1jtl4q6v5akj | nat-gw |             |
++----------------------+--------+-------------+
+```
+Создаю route table
+```bash
+yc vpc route-table create \
+  --name nat-rt \
+  --network-name nela-vlg \
+  --route destination=0.0.0.0/0,gateway-id=enpkq1ue1jtl4q6v5akj
+```
+Привязываю subnet
+```bash
+yc vpc subnet update e2lqj86jtcob2m7e1m0s \
+  --route-table-name nat-rt
+```
+
+Перезапускаю поды: 
+  ```bash
+  kubectl delete pod -n monitoring --all
+  ```
+Проверяю: 
+```bash
+kubectl get pods -n monitoring
+
+NAME                  READY   STATUS    RESTARTS   AGE
+loki-0                1/1     Running   0          2m14s
+loki-promtail-r97wc   1/1     Running   0          2m31s
+```
+**Loki** реально поднялся и работает!!!
+
+**Проверяю, что Loki пишет в S3** 
+
+```bash
+kubectl logs loki-0 -n monitoring
+```
+Вывод: 
+```
+level=info ts=2026-04-16T08:36:07.674761664Z caller=main.go:103 msg="Starting Loki" version="(version=2.6.1, branch=HEAD, revision=6bd05c9a4)"
+level=info ts=2026-04-16T08:36:07.675016434Z caller=modules.go:736 msg="RulerStorage is not configured in single binary mode and will not be started."
+level=info ts=2026-04-16T08:36:07.675374779Z caller=server.go:288 http=[::]:3100 grpc=[::]:9095 msg="server listening on addresses"
+```
+**Loki работает!** 
+
+
+Установила Grafana в ns monitoring 
+```bash 
+helm install grafana grafana/grafana \
+  -n monitoring \
+  --set service.type=ClusterIP
+```
+
+12. Установить в кластер promtail: 
+  - агенты promtail должны быть развернуты на всех нодах кластера, включая infra-ноды (добавить toleration)
+
+```bash 
+kubectl get ds -n monitoring
+
+NAME            DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+loki-promtail   1         1         1       1            1           role=infra      149m
+```
+Исправила loki-values.yaml, чтобы promtail стоял на всех нодах. Теперь: 
+```bash
+kubectl get pods -n monitoring -o wide | grep promtail
+
+loki-promtail-6bc9k        1/1     Running     0          19s    10.112.129.15   cl1t8pdv6rtd4oqb6ekr-ahav   <none>           <none>
+loki-promtail-m6bqj        1/1     Running     0          38s    10.112.128.16   cl1j1on23inasjurbm8h-ozuq   <none>           <none>
+```
+13. Установить в кластер Grafana 
+  - должна быть установлена на infra-ноды (toleration и  nodeSelector/NodeAffinity)
+
+Создала [`grafana-values.conf`](grafana-values.conf). 
+Применила: 
+ ```bash
+ helm upgrade grafana grafana/grafana \
+  -n monitoring \
+  -f grafana-values.yaml
+  ```
+Проверяю, сомтрю где разместился под: 
+```bash
+kubectl get pods -n monitoring -o wide | grep grafana    
+grafana-7b97db9b8b-xnr7j   1/1     Running   0          3m16s   10.112.129.16   cl1t8pdv6rtd4oqb6ekr-ahav   <none>           <none>
+```
+=> под на нужной ноде cl1t8pdv6rtd4oqb6ekr-ahav с role=infra. 
+
+14. В Grafana настроила data source к loki и сделала explore по этому datasource и убедилась, что логи отображаются. 
+
+В Grafana настроен data source Loki с URL http://loki:3100. 
+
+В разделе Explore выбран datasource Loki и выполнен запрос {namespace="monitoring"}.
+
+Логи успешно отображаются, что подтверждает работоспособность связки Promtail → Loki → Grafana.
+
+![Скриншот1](Grafana1.png)
+
+![Скриншот2](Grafana2.png)
+
