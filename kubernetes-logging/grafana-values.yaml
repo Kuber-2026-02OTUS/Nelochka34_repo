@@ -1,0 +1,52 @@
+replicas: 1
+
+nodeSelector:
+  role: infra
+
+tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "infra"
+    effect: "NoSchedule"
+  - key: "node-role"
+    operator: "Equal"
+    value: "infra"
+    effect: "NoSchedule"
+
+service:
+  type: ClusterIP
+  port: 80
+
+adminUser: admin
+
+persistence:
+  enabled: false
+
+resources: {}
+
+datasources: {}
+
+dashboardProviders: {}
+
+dashboards: {}
+
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+  autoMount: true
+
+podSecurityContext: {}
+
+securityContext: {}
+
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
