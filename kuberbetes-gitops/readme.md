@@ -55,7 +55,10 @@ Taints:             dedicated=infra:NoSchedule
 - приложите к ДЗ value.yaml конфигурации установки ArgoCD и команду самой установки чарта. 
 
 
-
-1. **Создала [`namespace.yaml`](namespace.yaml), запустила:**
+Создала ns - argocd
+```bash
+kubectl create namespace argocd
+```
+Создала [`values.yaml`](values.yaml): 
 
 ```bash
