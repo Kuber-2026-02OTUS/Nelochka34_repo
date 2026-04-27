@@ -103,3 +103,20 @@ http://127.0.0.1:8080/
 ![Скриншот1](ArgoCD.png)
 
 
+**Задание2: Создать project с именем Otus:**
+- в качестве source-репозитория указать  репозиторий с ДЗ курса
+- в качестве Destination должен быть указан кластер, в который установлен ArgoCD 
+- приложить манифест, описывающий project к ДЗ
+
+ Создала [`otus-project.yaml`](otus-project.yaml): 
+```bash
+kubectl apply -f otus-project.yaml
+```
+ Проверка: 
+```bash
+kubectl get appprojects -n argocd
+
+NAME      AGE
+default   26m
+otus      92s
+```
