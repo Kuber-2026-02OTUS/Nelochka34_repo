@@ -72,3 +72,34 @@ helm install argocd argo/argo-cd \
   --values values.yaml
 ```
 
+Проверка: 
+```bash
+kubectl get pods -n argocd -o wide
+
+NAME                                                READY   STATUS    RESTARTS   AGE   IP              NODE                        NOMINATED NODE   READINESS GATES
+argocd-application-controller-0                     1/1     Running   0          87s   10.112.129.26   cl1t8pdv6rtd4oqb6ekr-ahav   <none>           <none>
+argocd-applicationset-controller-78cf789548-4ns5h   1/1     Running   0          88s   10.112.129.27   cl1t8pdv6rtd4oqb6ekr-ahav   <none>           <none>
+argocd-dex-server-7949f5c6b7-2qsm2                  1/1     Running   0          88s   10.112.129.25   cl1t8pdv6rtd4oqb6ekr-ahav   <none>           <none>
+argocd-notifications-controller-5dcb84dd58-qfphv    1/1     Running   0          88s   10.112.129.29   cl1t8pdv6rtd4oqb6ekr-ahav   <none>           <none>
+argocd-redis-8558fcb564-lpgll                       1/1     Running   0          88s   10.112.129.24   cl1t8pdv6rtd4oqb6ekr-ahav   <none>           <none>
+argocd-repo-server-c894f8cff-fmxdw                  1/1     Running   0          88s   10.112.129.28   cl1t8pdv6rtd4oqb6ekr-ahav   <none>           <none>
+argocd-server-6d8c9c8889-tsnxv                      1/1     Running   0          87s   10.112.129.30   cl1t8pdv6rtd4oqb6ekr-ahav   <none>           <none>
+nela@Nelas-MacBook-Pro kuberbetes-gitops % 
+```
+
+Получаю пароль admin: 
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 -d
+echo
+```
+Открываю UI AgroCD:
+```bash
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
+Открываю в браузере: 
+http://127.0.0.1:8080/
+
+![Скриншот1](ArgoCD.png)
+
+
