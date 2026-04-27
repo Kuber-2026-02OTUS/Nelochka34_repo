@@ -61,4 +61,14 @@ kubectl create namespace argocd
 ```
 Создала [`values.yaml`](values.yaml): 
 
+Установила argocd через helm: 
 ```bash
+helm repo add argo https://argoproj.github.io/argo-helm
+helm repo update
+```
+```bash
+helm install argocd argo/argo-cd \
+  --namespace argocd \
+  --values values.yaml
+```
+
