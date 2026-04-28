@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homework
+  namespace: argocd
+spec:
+  project: otus
+
+  source:
+    repoURL: https://github.com/Kuber-2026-02OTUS/Nelochka34_repo
+    targetRevision: branch-kubernetes-gitops
+    path: Kubernetes-networks
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: homework
+
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
