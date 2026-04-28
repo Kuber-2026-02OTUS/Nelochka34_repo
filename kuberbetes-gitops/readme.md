@@ -164,3 +164,6 @@ homework-deployment-79568456d-4nvg4   1/1     Running   0          4m9s   10.112
 homework-deployment-79568456d-r88nm   1/1     Running   0          4m9s   10.112.128.31   cl1j1on23inasjurbm8h-ozuq   <none>           <none>
 ```
 Т.е запущено на worker ноде. 
+
+
+![Скриншот2](ArgoCD2.png)
