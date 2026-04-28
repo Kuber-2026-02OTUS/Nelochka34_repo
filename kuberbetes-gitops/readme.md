@@ -177,3 +177,49 @@ homework-deployment-79568456d-r88nm   1/1     Running   0          4m9s   10.112
 - параметр, задающий количество реплик запускаемого приложения должен переопределяться в конфигурации
 - приложите манифест, описывающий установку приложения к результатам ДЗ. 
 
+Создала манифест для ArgoCd: [`homework-helm-application.yaml`](homework-helm-application.yaml): 
+```bash
+kubectl apply -f homework-helm-application.yaml
+
+application.argoproj.io/homework-helm created
+```
+Проверяю: 
+```bash
+kubectl get applications -n argocd
+
+NAME            SYNC STATUS   HEALTH STATUS
+homework        OutOfSync     Progressing
+homework-helm   Synced        Progressing
+```
+```bash
+ubectl get ns homeworkhelm
+
+NAME           STATUS   AGE
+homeworkhelm   Active   68s
+```
+```bash
+kubectl get all -n homeworkhelm
+NAME                                           READY   STATUS             RESTARTS   AGE
+pod/homework-helm-deployment-dcb69669d-thpz7   1/1     Running            0          91s
+pod/homework-helm-deployment-dcb69669d-zzr5r   1/1     Running            0          91s
+pod/homework-helm-redis-master-0               0/1     ErrImagePull       0          91s
+pod/homework-helm-redis-replicas-0             0/1     ImagePullBackOff   0          90s
+
+NAME                                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/homework-helm-redis-headless   ClusterIP   None            <none>        6379/TCP   92s
+service/homework-helm-redis-master     ClusterIP   10.96.168.4     <none>        6379/TCP   92s
+service/homework-helm-redis-replicas   ClusterIP   10.96.248.94    <none>        6379/TCP   92s
+service/homework-helm-service          ClusterIP   10.96.190.203   <none>        80/TCP     92s
+
+NAME                                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/homework-helm-deployment   2/2     2            2           92s
+
+NAME                                                 DESIRED   CURRENT   READY   AGE
+replicaset.apps/homework-helm-deployment-dcb69669d   2         2         2       92s
+
+NAME                                            READY   AGE
+statefulset.apps/homework-helm-redis-master     0/1     92s
+statefulset.apps/homework-helm-redis-replicas   0/3     92s
+```
+
+![Скриншот2](ArgoCD3.png)
