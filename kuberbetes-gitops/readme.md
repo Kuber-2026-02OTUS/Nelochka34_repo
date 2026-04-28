@@ -120,3 +120,47 @@ NAME      AGE
 default   26m
 otus      92s
 ```
+
+**Задание: Создайте приложение ArgoCD:**
+- в качестве репозитория укажите ваше приложение из ДЗ kubernetes-networks 
+- sync policy - manual
+- namespace - homework
+- проект - otus. Убедитесь, что есть необходимые натсройки для создания и установки в namespace, который описан в ДЗ kubernetes-networks
+-  убедиттесь, что nodeSelector позволяет установить приложение на одну из нод кластера
+- приложите манифест, описывающий установку приложения к результатам ДЗ. 
+
+У меня у ноды: cl1j1on23inasjurbm8h-ozuq   role=workload
+Поэтому создала файл Kubernetes-networks/deployment2.yaml. Далее: 
+```bash
+git add /Users/nela/Documents/GitHub/Nelochka34_repo/Kubernetes-networks/deployment2.yaml
+git commit -m "add nodeSelector for workload node"
+git push origin branch-kubernetes-gitops
+```
+Создала манифест для ArgoCd: [`homework-appl.yaml`](homework-appl.yaml): 
+```bash
+kubectl apply -f homework-appl.yaml
+
+application.argoproj.io/homework created
+```
+Проверяю: 
+```bash
+kubectl get applications -n argocd
+
+NAME       SYNC STATUS   HEALTH STATUS
+homework   OutOfSync     Missing
+```
+В UI ArgoCD нажала - SYNC 
+Проверка: 
+```bash
+kubectl get ns homework
+NAME       STATUS   AGE
+homework   Active   3m55s
+
+nela@Nelas-MacBook-Pro kuberbetes-gitops % kubectl get pods -n homework -o wide
+
+NAME                                  READY   STATUS    RESTARTS   AGE    IP              NODE                        NOMINATED NODE   READINESS GATES
+homework-deployment-79568456d-424sg   1/1     Running   0          4m9s   10.112.128.33   cl1j1on23inasjurbm8h-ozuq   <none>           <none>
+homework-deployment-79568456d-4nvg4   1/1     Running   0          4m9s   10.112.128.32   cl1j1on23inasjurbm8h-ozuq   <none>           <none>
+homework-deployment-79568456d-r88nm   1/1     Running   0          4m9s   10.112.128.31   cl1j1on23inasjurbm8h-ozuq   <none>           <none>
+```
+Т.е запущено на worker ноде. 
