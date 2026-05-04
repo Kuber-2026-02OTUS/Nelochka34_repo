@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homework-helm
+  namespace: argocd
+spec:
+  project: otus
+
+  source:
+    repoURL: https://github.com/Kuber-2026-02OTUS/Nelochka34_repo
+    targetRevision: branch-kubernetes-gitops
+    path: kubernetes-templating/homework-chart
+
+    helm:
+      releaseName: homework-helm
+      parameters:
+        - name: namespace
+          value: homeworkhelm
+        - name: replicaCount
+          value: "2"
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: homeworkhelm
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
