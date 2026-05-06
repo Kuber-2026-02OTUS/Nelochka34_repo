@@ -63,7 +63,7 @@ kubectl create namespace consul
 
 namespace/consul created
 ```
-Создала файл Создала [`consul.yaml`](consul.yaml).  Так как на infra ноде присутствовали taint, то были добавлены tolerations. Теперь разрешен запуск подов consul на infra-ноде. 
+Создала файл [`consul.yaml`](consul.yaml).  Так как на infra ноде присутствовали taint, то были добавлены tolerations. Теперь разрешен запуск подов consul на infra-ноде. 
 
 Добавила Helm repo HashiCorp:
 ```bash
@@ -138,5 +138,5 @@ vault-agent-injector-6b4f84b6c-p7ztw   1/1     Running   0          31s
 ```
 - Vault установлен в namespace vault из официального Helm-чарта hashicorp/vault.
 - Vault настроен в HA mode с 3 репликами.
-- В качестве storage backend используется ранее установленный Consul:
+- В качестве storage backend используется Consul:
 consul-server.consul.svc.cluster.local:8500.
