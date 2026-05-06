@@ -140,3 +140,139 @@ vault-agent-injector-6b4f84b6c-p7ztw   1/1     Running   0          31s
 - Vault настроен в HA mode с 3 репликами.
 - В качестве storage backend используется Consul:
 consul-server.consul.svc.cluster.local:8500.
+
+**Задание3: выполните инициализацию vault и распечатайте с помощью полученного unseal key все поды хранилища**
+Запустила инициализацию: 
+```bash
+kubectl exec -n vault vault-0 -- vault operator init
+```bash
+Распечатала на vault-0: 
+kubectl exec -n vault vault-0 -- vault operator unseal <Unseal_Key_1>
+
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    1/3
+Unseal Nonce       edbbe4c1-8ca4-397b-4cc2-f217c4b2d6b0
+Version            1.21.2
+Build Date         2026-01-06T08:33:05Z
+Storage Type       consul
+HA Enabled         true
+```
+```bash
+kubernetes-vault % kubectl exec -n vault vault-0 -- vault operator unseal <Unseal_Key_2>
+
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    2/3
+Unseal Nonce       edbbe4c1-8ca4-397b-4cc2-f217c4b2d6b0
+Version            1.21.2
+Build Date         2026-01-06T08:33:05Z
+Storage Type       consul
+HA Enabled         true
+```
+```bash
+kubectl exec -n vault vault-0 -- vault operator unseal <Unseal_Key_3>
+
+Key             Value
+---             -----
+Seal Type       shamir
+Initialized     true
+Sealed          false
+Total Shares    5
+Threshold       3
+Version         1.21.2
+Build Date      2026-01-06T08:33:05Z
+Storage Type    consul
+Cluster Name    vault-cluster-eada3ee4
+Cluster ID      418d6650-3172-0b46-64d5-7cd8baad6ee4
+HA Enabled      true
+HA Cluster      https://vault-0.vault-internal:8201
+HA Mode         active
+Active Since    2026-05-06T16:31:57.32001348Z
+```
+Проверка статуса: 
+```bash
+kubectl exec -n vault vault-0 -- vault status
+
+Key             Value
+---             -----
+Seal Type       shamir
+Initialized     true
+Sealed          false
+Total Shares    5
+Threshold       3
+Version         1.21.2
+Build Date      2026-01-06T08:33:05Z
+Storage Type    consul
+Cluster Name    vault-cluster-eada3ee4
+Cluster ID      418d6650-3172-0b46-64d5-7cd8baad6ee4
+HA Enabled      true
+HA Cluster      https://vault-0.vault-internal:8201
+HA Mode         active
+Active Since    2026-05-06T16:31:57.32001348Z
+```
+Аналогично распечатываются vault-1, vault-2. Покажу просто их статус: 
+```bash
+kubectl exec -n vault vault-1 -- vault status           
+
+Key                    Value
+---                    -----
+Seal Type              shamir
+Initialized            true
+Sealed                 false
+Total Shares           5
+Threshold              3
+Version                1.21.2
+Build Date             2026-01-06T08:33:05Z
+Storage Type           consul
+Cluster Name           vault-cluster-eada3ee4
+Cluster ID             418d6650-3172-0b46-64d5-7cd8baad6ee4
+HA Enabled             true
+HA Cluster             https://vault-0.vault-internal:8201
+HA Mode                standby
+Active Node Address    http://10.112.130.12:8200
+```
+```bash
+kubectl exec -n vault vault-2 -- vault status
+
+Key                    Value
+---                    -----
+Seal Type              shamir
+Initialized            true
+Sealed                 false
+Total Shares           5
+Threshold              3
+Version                1.21.2
+Build Date             2026-01-06T08:33:05Z
+Storage Type           consul
+Cluster Name           vault-cluster-eada3ee4
+Cluster ID             418d6650-3172-0b46-64d5-7cd8baad6ee4
+HA Enabled             true
+HA Cluster             https://vault-0.vault-internal:8201
+HA Mode                standby
+Active Node Address    http://10.112.130.12:8200
+```
+Проверка всех подов: 
+```bash
+kubectl get pods -n vault
+
+NAME                                   READY   STATUS    RESTARTS   AGE
+vault-0                                1/1     Running   0          24m
+vault-1                                1/1     Running   0          24m
+vault-2                                1/1     Running   0          24m
+vault-agent-injector-6b4f84b6c-p7ztw   1/1     Running   0          24m
+```
+- Vault был инициализирован командой vault operator init на pod vault-0.
+- После инициализации были получены unseal keys и Initial Root Token.
+- С помощью трёх unseal keys были распечатаны все pod’ы Vault: vault-0, vault-1 и vault-2.
+- После распечатывания pod’ы перешли в состояние Ready, Vault работает в HA mode.
