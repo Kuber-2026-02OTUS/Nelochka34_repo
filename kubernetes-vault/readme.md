@@ -95,3 +95,4 @@ consul-server-0       1/1     Running   0          2m31s
 consul-server-1       1/1     Running   0          2m54s
 consul-server-2       1/1     Running   0          3m51s
 ```
+задание выполнено
