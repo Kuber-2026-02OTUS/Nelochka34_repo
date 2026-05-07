@@ -567,3 +567,30 @@ kubectl get secretstore -n vault
 NAME                AGE   STATUS   CAPABILITIES   READY
 vault-secretstore   28s   Valid    ReadWrite      True
 ```
+
+**Задание11: создать и применить манифест crd объекта External Secrets со следующими параметрами: 
+- ns - vault
+- SecretStore - созданный на прошлом шаге
+- Target.name = otus-cred
+- получает значения KV секрета /otus/cred из vault и отображает их в два ключа - username и password соответственно**
+
+Создала [`ES-otus-cred.yaml`](ES-otus-cred.yaml).
+Применила: 
+```bash
+kubectl apply -f ES-otus-cred.yaml
+
+externalsecret.external-secrets.io/otus-cred created
+```
+Проверка: 
+```bash
+kubectl get externalsecret -n vault
+
+NAME        STORETYPE     STORE               REFRESH INTERVAL   STATUS         READY   LAST SYNC
+otus-cred   SecretStore   vault-secretstore   1m                 SecretSynced   True    35s
+```
+Проверила, что Kubernetes Secret создан: 
+```bash
+kubectl get secret otus-cred -n vault
+NAME        TYPE     DATA   AGE
+otus-cred   Opaque   2      2m49s
+```
