@@ -443,3 +443,46 @@ use_annotations_as_alias_metadata    false
 ```
 Конфиг прочитан! 
 
+**Задание7: создать и применить полтику otus-policy для секретов /otus/cred с capabilities = [“read”, “list”]. Файл .hcl с политикой приложить к ДЗ**
+
+Создала [`otus-policy.hcl`](otus-policy.hcl).
+Скопировала в под Vault: 
+```bash
+kubectl cp otus-policy.hcl vault/vault-0:/tmp/otus-policy.hcl
+```
+Применила policy: 
+```bash
+kubernetes-vault % kubectl exec -n vault vault-0 -- sh -c '
+export VAULT_ADDR="http://127.0.0.1:8200"
+vault policy write otus-policy /tmp/otus-policy.hcl
+'
+
+Success! Uploaded policy: otus-policy
+```
+Проверка, что policy создано: 
+```bash
+kubectl exec -n vault vault-0 -- sh -c '
+export VAULT_ADDR="http://127.0.0.1:8200"
+vault policy list
+'
+
+default
+otus-policy
+root
+```
+=> Все ок
+
+Можно просмотреть содержимое: 
+```bash
+kubectl exec -n vault vault-0 -- sh -c '
+export VAULT_ADDR="http://127.0.0.1:8200"
+vault policy read otus-policy
+'
+
+path "otus/cred" {
+  capabilities = ["read", "list"]
+}
+```
+- Создана и применена Vault policy otus-policy.
+- Политика разрешает read и list доступ к секрету otus/cred.
+
