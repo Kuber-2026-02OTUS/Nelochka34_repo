@@ -529,3 +529,28 @@ ttl                                         24h
 - Роль привязана к ServiceAccount vault-auth из namespace vault.
 - При успешной Kubernetes-аутентификации выдаётся Vault token с политикой otus-policy.
 
+**Задание9: установить External Secrets Operator из helm-чарта в namespace vault. Команду установки чарта и файл с переменными, если вы их используете, приложите к результатам ДЗ**
+
+```bash
+helm repo add external-secrets https://charts.external-secrets.io
+helm repo update external-secrets
+```
+Создала [`external-secrets-values.yaml`](external-secrets-values.yaml).
+Установила ESO в vault: 
+```bash
+helm upgrade --install external-secrets external-secrets/external-secrets \
+  --namespace vault \
+  -f external-secrets-values.yaml
+```
+Проверяю поды: 
+```bash
+kubectl get pods -n vault | grep external-secrets
+
+external-secrets-675bb64586-hctkx                   1/1     Running   0             50s
+external-secrets-cert-controller-6fb859d7bb-4tr6h   1/1     Running   0             50s
+external-secrets-webhook-569bd94445-sc5wl           1/1     Running   0             50s
+```
+- External Secrets Operator установлен в namespace vault из Helm-чарта external-secrets/external-secrets.
+- При установке включена установка CRD через параметр installCRDs: true.
+
+**Задание10: **
