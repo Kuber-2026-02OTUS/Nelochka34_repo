@@ -553,4 +553,17 @@ external-secrets-webhook-569bd94445-sc5wl           1/1     Running   0         
 - External Secrets Operator установлен в namespace vault из Helm-чарта external-secrets/external-secrets.
 - При установке включена установка CRD через параметр installCRDs: true.
 
-**Задание10: **
+**Задание10: создать и применить манифест crd объекта SecretStore в namespace vault, сконфигурированный для доступа к KV секретам Vault с использованием ранее созданной роли otus и сервис аккаунта vault-auth. Убедитесь, что созданный SecretStore успешно подключился к vault. Получившийся манифест приложите к результатам ДЗ**
+
+Создала [`secretstore-vault.yaml`](secretstore-vault.yaml).
+```bash 
+kubectl apply -f secretstore-vault.yaml 
+
+secretstore.external-secrets.io/vault-secretstore created
+```
+Проверка: 
+```bash
+kubectl get secretstore -n vault
+NAME                AGE   STATUS   CAPABILITIES   READY
+vault-secretstore   28s   Valid    ReadWrite      True
+```
