@@ -274,5 +274,104 @@ vault-agent-injector-6b4f84b6c-p7ztw   1/1     Running   0          24m
 ```
 - Vault был инициализирован командой vault operator init на pod vault-0.
 - После инициализации были получены unseal keys и Initial Root Token.
-- С помощью трёх unseal keys были распечатаны все pod’ы Vault: vault-0, vault-1 и vault-2.
+- С помощью трёх unseal keys были распечатаны (unsealed) все pod’ы Vault: vault-0, vault-1 и vault-2.
 - После распечатывания pod’ы перешли в состояние Ready, Vault работает в HA mode.
+
+**Задание4: создать хранилище секретов otus/ с Secret Engine KV, а в нем секрет otus/cred, содержащий username='otus' password='asajkjkahs’**
+
+Проверяю поды: 
+```bash
+kubectl get pods -n vault
+
+NAME                                   READY   STATUS    RESTARTS      AGE
+vault-0                                1/1     Running   1 (16h ago)   17h
+vault-1                                1/1     Running   1 (16h ago)   17h
+vault-2                                1/1     Running   1 (16h ago)   17h
+vault-agent-injector-6b4f84b6c-p7ztw   1/1     Running   1 (16h ago)   17h
+```
+Все запущено => Хранилище распечатано. 
+Логинимся в Vault: 
+```bash
+kubectl exec -it -n vault vault-0 -- sh
+```
+попала внутрь пода. Указываю адрес Vault: 
+```bash
+export VAULT_ADDR='http://127.0.0.1:8200'
+
+vault login
+
+ault status
+Key             Value
+---             -----
+Seal Type       shamir
+Initialized     true
+Sealed          false
+Total Shares    5
+Threshold       3
+Version         1.21.2
+Build Date      2026-01-06T08:33:05Z
+Storage Type    consul
+Cluster Name    vault-cluster-eada3ee4
+Cluster ID      418d6650-3172-0b46-64d5-7cd8baad6ee4
+HA Enabled      true
+HA Cluster      https://vault-0.vault-internal:8201
+HA Mode         active
+Active Since    2026-05-07T09:26:38.184199654Z
+```
+Создала Secret Engine: 
+``bash
+vault secrets enable -path=otus kv
+
+Success! Enabled the kv secrets engine at: otus/
+``
+
+Создала секрет: 
+```bash
+vault kv put otus/cred \
+  username="otus" \
+  password="asajkjkahs"
+
+  Success! Data written to: otus/cred
+```
+Секрет создан. Проверяю: 
+```bash
+vault kv get otus/cred
+
+====== Data ======
+Key         Value
+---         -----
+password    asajkjkahs
+username    otus
+```
+- Был создан Secret Engine типа KV по пути otus/.
+- В хранилище создан секрет: otus/cred
+    с параметрами:
+        sername=otus
+        assword=asajkjkahs
+
+**Задание5: в namespace vault создать serviceAccount с именем vault-auth и ClusterRoleBinding для него с ролью system:auth-delegator. Приложить получившиеся манифесты к ДЗ**
+
+Создала файл [`vault-auth.yaml`](vault-auth.yaml).
+```bash
+kubectl apply -f vault-auth.yaml 
+
+serviceaccount/vault-auth created
+clusterrolebinding.rbac.authorization.k8s.io/vault-auth-delegator created
+```
+Проверила sa: 
+```bash
+kubectl get serviceaccount vault-auth -n vault
+
+NAME         SECRETS   AGE
+vault-auth   0         42s
+```
+Проверила CRB: 
+```bash
+kubectl get clusterrolebinding vault-auth-delegator
+
+NAME                   ROLE                                AGE
+vault-auth-delegator   ClusterRole/system:auth-delegator   80s
+```
+- в namespace vault создан ServiceAccount vault-auth.
+- создан ClusterRoleBinding vault-auth-delegator с ролью system:auth-delegator.Данная роль нужна Vault для проверки Kubernetes ServiceAccount токенов при использовании Kubernetes Auth.
+
