@@ -594,3 +594,27 @@ kubectl get secret otus-cred -n vault
 NAME        TYPE     DATA   AGE
 otus-cred   Opaque   2      2m49s
 ```
+**Задание12: убедиться, что после применения ExternalSecret будет создан Secret в ns vault с именем otus-cred и хранящий в себе два ключа username и password, со значениями, которые были сохранены ранее в vault. Добавьте манифест обьекта ExternalSecret к результатам ДЗ**
+
+Ранее писала при проверке, что Kubernetes Secret создан. 
+
+Проверяю, что внутри есть ключи: 
+```bash
+kubectl get secret otus-cred -n vault -o jsonpath='{.data}'
+
+{"password":"YXNhamtqa2Focw==","username":"b3R1cw=="}%  
+```
+Проверяю значение username:
+```bash
+kubectl get secret otus-cred -n vault -o jsonpath='{.data.username}' | base64 --decode
+echo
+
+otus
+```
+Проверяю значение password: 
+```bash
+kubectl get secret otus-cred -n vault -o jsonpath='{.data.password}' | base64 --decode
+echo
+
+asajkjkahs
+```
