@@ -375,3 +375,71 @@ vault-auth-delegator   ClusterRole/system:auth-delegator   80s
 - в namespace vault создан ServiceAccount vault-auth.
 - создан ClusterRoleBinding vault-auth-delegator с ролью system:auth-delegator.Данная роль нужна Vault для проверки Kubernetes ServiceAccount токенов при использовании Kubernetes Auth.
 
+**Задание6: в vault включить авторизацию auth/kubernetes и сконфигурировтаь ее используя токен и сертификат ранее созданного ServiceAccount**
+
+Создала [`vault-auth-token.yaml`](vault-auth-token.yaml).
+```bash
+kubectl apply -f vault-auth-token.yaml
+
+secret/vault-auth-token created
+```
+Проверка: 
+```bash
+kubectl get secret vault-auth-token -n vault
+
+NAME               TYPE                                  DATA   AGE
+vault-auth-token   kubernetes.io/service-account-token   3      23s
+```
+```bash
+TOKEN_REVIEWER_JWT=$(kubectl get secret vault-auth-token -n vault -o jsonpath='{.data.token}' | base64 --decode)
+KUBE_CA_CERT=$(kubectl get secret vault-auth-token -n vault -o jsonpath='{.data.ca\.crt}' | base64 --decode)
+```
+Проверила, что переменные не пустые: 
+```bash
+echo "$TOKEN_REVIEWER_JWT" | cut -c1-30
+echo "$KUBE_CA_CERT" | head
+```
+Зашла в Vault и залогинилась root token. Далее передала CA-сертификат внутрь пода vault-0:
+```bash
+kubernetes-vault % kubectl exec -i -n vault vault-0 -- sh -c 'cat > /tmp/kubernetes-ca.crt' <<< "$KUBE_CA_CERT"
+```
+Включила auth/kubernetes в Vault: 
+```bash
+kubectl exec -n vault vault-0 -- sh -c '
+export VAULT_ADDR="http://127.0.0.1:8200"
+vault auth enable kubernetes
+'
+Success! Enabled kubernetes auth method at: kubernetes/
+```
+Сконфигурировала Kubernetes Auth
+```bash
+kubectl exec -n vault vault-0 -- sh -c "
+export VAULT_ADDR='http://127.0.0.1:8200'
+vault write auth/kubernetes/config \
+  token_reviewer_jwt='$TOKEN_REVIEWER_JWT' \
+  kubernetes_host='https://kubernetes.default.svc:443' \
+  kubernetes_ca_cert=@/tmp/kubernetes-ca.crt
+"
+
+Success! Data written to: auth/kubernetes/config
+```
+Проверка: 
+```bash
+kubectl exec -n vault vault-0 -- sh -c '
+export VAULT_ADDR="http://127.0.0.1:8200"
+vault read auth/kubernetes/config
+'
+
+Key                                  Value
+---                                  -----
+disable_iss_validation               true
+disable_local_ca_jwt                 false
+issuer                               n/a
+kubernetes_ca_cert                   n/a
+kubernetes_host                      https://kubernetes.default.svc:443
+pem_keys                             []
+token_reviewer_jwt_set               true
+use_annotations_as_alias_metadata    false
+```
+Конфиг прочитан! 
+
