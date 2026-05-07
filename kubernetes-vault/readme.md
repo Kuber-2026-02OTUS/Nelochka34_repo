@@ -486,3 +486,46 @@ path "otus/cred" {
 - Создана и применена Vault policy otus-policy.
 - Политика разрешает read и list доступ к секрету otus/cred.
 
+**Задание8: создать роль auth/kubernetes/role/otus в vault с использвоанием ServiceAccount vault-auth из namespace Vault и политикой otus-policy**
+
+Создаю роль: 
+```bash
+kubectl exec -n vault vault-0 -- sh -c '
+export VAULT_ADDR="http://127.0.0.1:8200"
+
+vault write auth/kubernetes/role/otus \
+  bound_service_account_names=vault-auth \
+  bound_service_account_namespaces=vault \
+  policies=otus-policy \
+  ttl=24h
+'
+```
+Проверяю, что роль создана: 
+```bash
+kubectl exec -n vault vault-0 -- sh -c '
+export VAULT_ADDR="http://127.0.0.1:8200"
+vault read auth/kubernetes/role/otus
+'
+
+Key                                         Value
+---                                         -----
+alias_name_source                           serviceaccount_uid
+bound_service_account_names                 [vault-auth]
+bound_service_account_namespace_selector    n/a
+bound_service_account_namespaces            [vault]
+policies                                    [otus-policy]
+token_bound_cidrs                           []
+token_explicit_max_ttl                      0s
+token_max_ttl                               0s
+token_no_default_policy                     false
+token_num_uses                              0
+token_period                                0s
+token_policies                              [otus-policy]
+token_ttl                                   24h
+token_type                                  default
+ttl                                         24h
+```
+- В Vault создана Kubernetes Auth role otus по пути auth/kubernetes/role/otus.
+- Роль привязана к ServiceAccount vault-auth из namespace vault.
+- При успешной Kubernetes-аутентификации выдаётся Vault token с политикой otus-policy.
+
