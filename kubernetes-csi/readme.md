@@ -137,3 +137,73 @@ csi-s3-secret   Opaque   3      35s
 
 **Задание4: Создайте storageClass описывающий класс хранилища и
 приложите манифест для проверки ДЗ**
+
+Cоздала и применила [`storageclass.yaml`](storageclass.yaml): 
+```bash
+kubectl apply -f storageclass.yaml 
+```
+Проверка: 
+```bash
+kubectl get storageclass
+kubectl describe storageclass csi-s3
+
+Name:            csi-s3
+IsDefaultClass:  No
+Annotations:     kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"storage.k8s.io/v1","kind":"StorageClass","metadata":{"annotations":{},"name":"csi-s3"},"parameters":{"bucket":"otus-k8s-s3-csi-nelochka34","csi.storage.k8s.io/controller-publish-secret-name":"csi-s3-secret","csi.storage.k8s.io/controller-publish-secret-namespace":"kube-system","csi.storage.k8s.io/node-publish-secret-name":"csi-s3-secret","csi.storage.k8s.io/node-publish-secret-namespace":"kube-system","csi.storage.k8s.io/node-stage-secret-name":"csi-s3-secret","csi.storage.k8s.io/node-stage-secret-namespace":"kube-system","csi.storage.k8s.io/provisioner-secret-name":"csi-s3-secret","csi.storage.k8s.io/provisioner-secret-namespace":"kube-system","mounter":"geesefs","options":"--memory-limit 1000 --dir-mode 0777 --file-mode 0666"},"provisioner":"ru.yandex.s3.csi"}
+
+Provisioner:           ru.yandex.s3.csi
+Parameters:            bucket=otus-k8s-s3-csi-nelochka34,csi.storage.k8s.io/controller-publish-secret-name=csi-s3-secret,csi.storage.k8s.io/controller-publish-secret-namespace=kube-system,csi.storage.k8s.io/node-publish-secret-name=csi-s3-secret,csi.storage.k8s.io/node-publish-secret-namespace=kube-system,csi.storage.k8s.io/node-stage-secret-name=csi-s3-secret,csi.storage.k8s.io/node-stage-secret-namespace=kube-system,csi.storage.k8s.io/provisioner-secret-name=csi-s3-secret,csi.storage.k8s.io/provisioner-secret-namespace=kube-system,mounter=geesefs,options=--memory-limit 1000 --dir-mode 0777 --file-mode 0666
+AllowVolumeExpansion:  <unset>
+MountOptions:          <none>
+ReclaimPolicy:         Delete
+VolumeBindingMode:     Immediate
+Events:                <none>
+```
+Создан StorageClass csi-s3 для работы с Yandex Object Storage через CSI S3 driver.
+В качестве provisioner используется ru.yandex.s3.csi.
+Для доступа к Object Storage используется secret csi-s3-secret в namespace kube-system.
+
+**Задание5: Установить CSI driver из репозитория: https://github.com/yandex-cloud/k8s-csi-s3.**
+Добавила Helm-репозиторий: 
+```bash
+helm repo add yandex-s3 https://yandex-cloud.github.io/k8s-csi-s3/charts
+"yandex-s3" has been added to your repositories
+
+helm repo update
+```
+Устанавливаю CSI driver (тк Secret и StorageClass я уже создала): 
+```bash
+helm install csi-s3 yandex-s3/csi-s3 \
+  --namespace kube-system \
+  --set secret.create=false \
+  --set secret.name=csi-s3-secret \
+  --set storageClass.create=false
+```
+Проверяю helm: 
+```bash
+helm list -n kube-system
+
+NAME    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                APP VERSION
+csi-s3  kube-system     1               2026-05-23 19:44:52.179976 +0300 MSK    deployed        csi-s3-0.43.7        0.43.7     
+```
+проверяю поды: 
+```bash
+kubectl get pods -n kube-system | grep csi-s3
+csi-s3-b5hjb                         2/2     Running     0                2m31s
+csi-s3-f4dsm                         2/2     Running     0                2m31s
+csi-s3-provisioner-0                 2/2     Running     0                2m31s
+```
+проверяю csi driver: 
+```bash
+kubectl get csidriver
+
+NAME                            ATTACHREQUIRED   PODINFOONMOUNT   STORAGECAPACITY   TOKENREQUESTS   REQUIRESREPUBLISH   MODES        AGE
+disk-csi-driver.mks.ycloud.io   true             true             false             <unset>         false               Persistent   38d
+io.ycloud.mks.disk-csi-driver   true             true             false             <unset>         false               Persistent   38d
+ru.yandex.s3.csi                false            true             false             <unset>         false               Persistent   3m26s
+```
+Установлен CSI S3 driver из Helm-репозитория GitHub yandex-cloud/k8s-csi-s3.
+Драйвер установлен в namespace kube-system.
+Для доступа к Object Storage используется ранее созданный Kubernetes Secret csi-s3-secret.
+
+**Задание6: Создайте манифест PVC, использующий для хранения созданный вами storageClass с механизмом autoProvisioning и приложите его для проверки ДЗ**
