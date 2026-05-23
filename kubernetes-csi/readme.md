@@ -208,7 +208,7 @@ ru.yandex.s3.csi                false            true             false         
 
 **Задание6: Создайте манифест PVC, использующий для хранения созданный вами storageClass с механизмом autoProvisioning и приложите его для проверки ДЗ**
 
-Cоздала и [`pvc.yaml`](pvc.yaml). 
+Cоздала манифест [`pvc.yaml`](pvc.yaml). 
 Несколько под могут читать/писать одновременно. Используется созданный ранее SorageClass. Object Storage указан размер. 
 ПРименяю: 
 ```bash
@@ -225,4 +225,60 @@ s3-pvc   Bound    pvc-83a813c6-849d-4669-ac90-b8cbf11d6f96   1Gi        RWX     
 PVC использует механизм dynamic provisioning (autoProvisioning) через CSI S3 driver ru.yandex.s3.csi.
 После создания PVC автоматически создан и привязан PersistentVolume.
 
-**Задание7: **
+**Задание7: Создайте манифест pod или deployment, использующий созданнй ранее PVC в качестве volume и монтирущий его в контейнер пода в произвольную точку монтировани и приложите манифест для проверки ДЗ** 
+
+Cоздала манифест [`pod-s3-test.yaml`](pod-s3-test.yaml). 
+```bash
+kubectl apply -f pod-s3-test.yaml
+pod/s3-test-pod created
+
+kubernetes-csi % kubectl get pod s3-test-pod
+NAME          READY   STATUS    RESTARTS   AGE
+s3-test-pod   1/1     Running   0          7s
+```
+Проверила, что volume смонтировался: 
+```bash
+kubectl exec -it s3-test-pod -- ls -la /mnt/s3
+
+total 9
+drwxrwxrwx    2 root     root          4096 May 23 17:14 .
+drwxr-xr-x    3 root     root          4096 May 23 17:14 ..
+-rw-rw-rw-    1 root     root            35 May 23 17:14 test.txt
+
+kubectl exec -it s3-test-pod -- cat /mnt/s3/test.txt
+S3 CSI volume mounted successfully
+```
+**Задание8: Под в процессе работ должен производить запись в примонтированну директорию. Убедитесь, что файл действительно сохрантся в ObjectStorage.**
+
+Запись происходит, я показала выше. То, что файл внутри пода также было выше. 
+Проверяю, что файл в bucket otus-k8s-s3-csi-nelochka34: 
+```bash
+yc storage s3api list-objects \
+  --bucket otus-k8s-s3-csi-nelochka34
+contents:
+  - key: pvc-83a813c6-849d-4669-ac90-b8cbf11d6f96/
+    last_modified: "2026-05-23T17:08:27.074Z"
+    etag: '"d41d8cd98f00b204e9800998ecf8427e"'
+    owner:
+      id: ajed90j8bk1233udh822
+      display_name: ajed90j8bk1233udh822
+    storage_class: STANDARD
+  - key: pvc-83a813c6-849d-4669-ac90-b8cbf11d6f96/test.txt
+    last_modified: "2026-05-23T17:14:47.096Z"
+    etag: '"eaf4d7a8f7e947d14add8a5c3448740c"'
+    size: "35"
+    owner:
+      id: ajed90j8bk1233udh822
+      display_name: ajed90j8bk1233udh822
+    storage_class: STANDARD
+name: otus-k8s-s3-csi-nelochka34
+max_keys: "1000"
+key_count: "2"
+request_id: e9cf8724b3351b39
+```
+Создан pod s3-test-pod, использующий PVC s3-pvc.
+PVC смонтирован в контейнер по пути /mnt/s3.
+В процессе работы pod создает файл test.txt внутри примонтированной директории.
+Проверено наличие файла:
+- внутри контейнера;
+- внутри Yandex Object Storage bucket.
