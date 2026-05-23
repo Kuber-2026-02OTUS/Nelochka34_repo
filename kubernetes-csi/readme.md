@@ -207,3 +207,22 @@ ru.yandex.s3.csi                false            true             false         
 Для доступа к Object Storage используется ранее созданный Kubernetes Secret csi-s3-secret.
 
 **Задание6: Создайте манифест PVC, использующий для хранения созданный вами storageClass с механизмом autoProvisioning и приложите его для проверки ДЗ**
+
+Cоздала и [`pvc.yaml`](pvc.yaml). 
+Несколько под могут читать/писать одновременно. Используется созданный ранее SorageClass. Object Storage указан размер. 
+ПРименяю: 
+```bash
+kubectl apply -f pvc.yaml
+```
+Проверка: 
+```bash
+kubectl get pvc
+
+NAME     STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+s3-pvc   Bound    pvc-83a813c6-849d-4669-ac90-b8cbf11d6f96   1Gi        RWX            csi-s3         <unset>                 9s
+```
+Создан PersistentVolumeClaim s3-pvc, использующий StorageClass csi-s3.
+PVC использует механизм dynamic provisioning (autoProvisioning) через CSI S3 driver ru.yandex.s3.csi.
+После создания PVC автоматически создан и привязан PersistentVolume.
+
+**Задание7: **
