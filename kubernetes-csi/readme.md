@@ -117,3 +117,23 @@ export SECRET_ACCESS_KEY=YYY
 ```
 **Задание3: Создайте secret c ключами для доступа к Object Storage и
 приложите манифест для проверки ДЗ** 
+
+создала и применила [`secret.yaml`](secret.yaml).
+Но чтобы не писать ключи в манифест, я применила secret прямо из CLI: 
+```bash
+kubectl create secret generic csi-s3-secret \
+  -n kube-system \
+  --from-literal=accessKeyID="$ACCESS_KEY_ID" \
+  --from-literal=secretAccessKey="$SECRET_ACCESS_KEY" \
+  --from-literal=endpoint="https://storage.yandexcloud.net"\
+```
+Проверка: 
+```bash
+kubectl get secret csi-s3-secret -n kube-system
+
+NAME            TYPE     DATA   AGE
+csi-s3-secret   Opaque   3      35s
+```
+
+**Задание4: Создайте storageClass описывающий класс хранилища и
+приложите манифест для проверки ДЗ**
