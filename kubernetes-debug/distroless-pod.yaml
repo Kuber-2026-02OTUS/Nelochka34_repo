@@ -10,8 +10,3 @@ spec:
       image: kyos0109/nginx-distroless:latest
       ports:
         - containerPort: 80
-      securityContext:
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop:
-            - ALL
