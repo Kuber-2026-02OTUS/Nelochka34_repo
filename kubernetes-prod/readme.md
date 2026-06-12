@@ -197,3 +197,198 @@ k8s-worker-01   Ready    <none>          2m47s   v1.35.5
 k8s-worker-02   Ready    <none>          80s     v1.35.5
 k8s-worker-03   Ready    <none>          64s     v1.35.5
 ```
+**Приложите к результатам ДЗ ввод команд kubectl get nodes -o wide, показващий статус и версию k8s всех нод кластера**
+```bash
+kubectl get nodes -o wide
+NAME            STATUS   ROLES           AGE     VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+k8s-master-01   Ready    control-plane   77m     v1.35.5   10.129.0.14   <none>        Ubuntu 24.04.4 LTS   6.8.0-124-generic   containerd://2.2.1
+k8s-worker-01   Ready    <none>          5m49s   v1.35.5   10.129.0.20   <none>        Ubuntu 24.04.4 LTS   6.8.0-124-generic   containerd://2.2.1
+k8s-worker-02   Ready    <none>          4m22s   v1.35.5   10.129.0.34   <none>        Ubuntu 24.04.4 LTS   6.8.0-124-generic   containerd://2.2.1
+k8s-worker-03   Ready    <none>          4m6s    v1.35.5   10.129.0.22   <none>        Ubuntu 24.04.4 LTS   6.8.0-124-generic   containerd://2.2.1
+```
+
+**Выполните обновление master ноды до последней актуалной версии k8s с помощью kubeadm**
+
+ Сначала обновляется kubeadm, потом выполняется kubeadm upgrade, и только потом обновляются kubelet и  kubectl. 
+
+ Снимаю блокировку: 
+ ```bash
+ sudo apt-mark unhold kubeadm kubelet kubectl
+ ```
+ Текущий репозиторий: 
+ ```bash
+cat /etc/apt/sources.list.d/kubernetes.list
+deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.35/deb/ /
+```
+меняю: 
+```bash
+sudo rm -f /etc/apt/sources.list.d/kubernetes.list
+
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+```
+обновляю кэш: 
+```bash
+sudo apt update
+```
+Обновляю только kubeadm: 
+```bash
+sudo apt install -y kubeadm=1.36.1-1.1
+```
+Проверяю (на каждой ноде): 
+```bash
+kubeadm version
+
+kubeadm version: &version.Info{Major:"1", Minor:"36", EmulationMajor:"", EmulationMinor:"", MinCompatibilityMajor:"", MinCompatibilityMinor:"", GitVersion:"v1.36.1", GitCommit:"756939600b9a7180fc2df6550a4585b638875e67", GitTreeState:"clean", BuildDate:"2026-05-12T09:53:52Z", GoVersion:"go1.26.2", Compiler:"gc", Platform:"linux/amd64"}
+```
+Смотрю план обновления: 
+```bash
+sudo kubeadm upgrade plan
+
+[preflight] Running pre-flight checks.
+[upgrade/config] Reading configuration from the "kubeadm-config" ConfigMap in namespace "kube-system"...
+[upgrade/config] Use 'kubeadm init phase upload-config kubeadm --config your-config-file' to re-upload it.
+[upgrade] Running cluster health checks
+[upgrade] Fetching available versions to upgrade to
+[upgrade/versions] Cluster version: 1.35.5
+[upgrade/versions] kubeadm version: v1.36.1
+[upgrade/versions] Target version: v1.36.1
+[upgrade/versions] Latest version in the v1.35 series: v1.35.5
+
+Components that must be upgraded manually after you have upgraded the control plane with 'kubeadm upgrade apply':
+COMPONENT   NODE            CURRENT   TARGET
+kubelet     k8s-master-01   v1.35.5   v1.36.1
+kubelet     k8s-worker-01   v1.35.5   v1.36.1
+kubelet     k8s-worker-02   v1.35.5   v1.36.1
+kubelet     k8s-worker-03   v1.35.5   v1.36.1
+
+Upgrade to the latest stable version:
+
+COMPONENT                 NODE            CURRENT   TARGET
+kube-apiserver            k8s-master-01   v1.35.5   v1.36.1
+kube-controller-manager   k8s-master-01   v1.35.5   v1.36.1
+kube-scheduler            k8s-master-01   v1.35.5   v1.36.1
+kube-proxy                                1.35.5    v1.36.1
+CoreDNS                                   v1.13.1   v1.14.2
+etcd                      k8s-master-01   3.6.6-0   3.6.8-0
+
+You can now apply the upgrade by executing the following command:
+
+        kubeadm upgrade apply v1.36.1
+
+_____________________________________________________________________
+
+
+The table below shows the current state of component configs as understood by this version of kubeadm.
+Configs that have a "yes" mark in the "MANUAL UPGRADE REQUIRED" column require manual config upgrade or
+resetting to kubeadm defaults before a successful upgrade can be performed. The version to manually
+upgrade to is denoted in the "PREFERRED VERSION" column.
+
+API GROUP                 CURRENT VERSION   PREFERRED VERSION   MANUAL UPGRADE REQUIRED
+kubeproxy.config.k8s.io   v1alpha1          v1alpha1            no
+kubelet.config.k8s.io     v1beta1           v1beta1             no
+_____________________________________________________________________
+```
+
+Выполняю обновление control-plane
+```bash
+sudo kubeadm upgrade apply v1.36.1
+```
+Обновляю kubelet и kubectl: 
+```bash
+sudo apt install -y \
+kubelet=1.36.1-1.1 \
+kubectl=1.36.1-1.1
+```
+перезапускаю kubelet: 
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+```
+Проверяю: 
+```bash
+kubectl version 
+
+Client Version: v1.36.1
+Kustomize Version: v5.8.1
+Server Version: v1.36.1
+```
+После оновления: 
+```bash
+kubectl get nodes
+
+NAME            STATUS   ROLES           AGE    VERSION
+k8s-master-01   Ready    control-plane   113m   v1.36.1
+k8s-worker-01   Ready    <none>          42m    v1.35.5
+k8s-worker-02   Ready    <none>          40m    v1.35.5
+k8s-worker-03   Ready    <none>          40m    v1.35.5
+```
+
+**Последовательно введите из планирования все воркер-ноды, обновите их до последней актуалной версии и верните в планирование**
+
+на мастере: 
+```bash
+kubectl drain k8s-worker-01 \
+  --ignore-daemonsets \
+  --delete-emptydir-data
+```
+Проверяю: 
+```bash
+kubectl get nodes
+
+NAME            STATUS                     ROLES           AGE    VERSION
+k8s-master-01   Ready                      control-plane   157m   v1.36.1
+k8s-worker-01   Ready,SchedulingDisabled   <none>          86m    v1.35.5
+k8s-worker-02   Ready                      <none>          85m    v1.35.5
+k8s-worker-03   Ready                      <none>          84m    v1.35.5
+```
+На worker-01 обновляю: 
+```bash 
+sudo apt update
+
+sudo apt install -y kubeadm=1.36.1-1.1
+```
+Проевряю: 
+```bash
+kubeadm version
+
+kubeadm version: &version.Info{Major:"1", Minor:"36", EmulationMajor:"", EmulationMinor:"", MinCompatibilityMajor:"", MinCompatibilityMinor:"", GitVersion:"v1.36.1", GitCommit:"756939600b9a7180fc2df6550a4585b638875e67", GitTreeState:"clean", BuildDate:"2026-05-12T09:53:52Z", GoVersion:"go1.26.2", Compiler:"gc", Platform:"linux/amd64"}
+```
+Обновляю конфигурацию ноды: 
+```bash
+sudo kubeadm upgrade node
+```
+
+Обновляю kubelet и  kubectl: 
+```bash
+sudo apt install -y \
+kubelet=1.36.1-1.1 \
+kubectl=1.36.1-1.1
+```
+Перезапускаю kubelet:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+```
+Возвращаю ноду в планирование на мастере: 
+```bash
+kubectl uncordon k8s-worker-01
+```
+Проверяю: 
+```bash
+kubectl get nodes
+
+NAME            STATUS   ROLES           AGE    VERSION
+k8s-master-01   Ready    control-plane   164m   v1.36.1
+k8s-worker-01   Ready    <none>          93m    v1.36.1
+k8s-worker-02   Ready    <none>          91m    v1.35.5
+k8s-worker-03   Ready    <none>          91m    v1.35.5
+```
+Аналогично делаю на worker-02, worker-03. 
+```bash
+kubectl get nodes
+NAME            STATUS   ROLES           AGE     VERSION
+k8s-master-01   Ready    control-plane   6h20m   v1.36.1
+k8s-worker-01   Ready    <none>          5h9m    v1.36.1
+k8s-worker-02   Ready    <none>          5h7m    v1.36.1
+k8s-worker-03   Ready    <none>          5h7m    v1.36.1
+```
