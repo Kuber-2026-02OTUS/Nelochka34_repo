@@ -392,3 +392,14 @@ k8s-worker-01   Ready    <none>          5h9m    v1.36.1
 k8s-worker-02   Ready    <none>          5h7m    v1.36.1
 k8s-worker-03   Ready    <none>          5h7m    v1.36.1
 ```
+
+**Приложите к результатам ДЗ ввод команд kubectl get nodes -o wide, показывающий статус и версию k8s всех нод кластера после обновлени**
+
+```bash
+kubectl get nodes -o wide
+NAME            STATUS   ROLES           AGE     VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION              CONTAINER-RUNTIME
+k8s-master-01   Ready    control-plane   6h24m   v1.36.1   10.129.0.14   <none>        Ubuntu 24.04.4 LTS   6.8.0-124-generic (amd64)   containerd://2.2.1
+k8s-worker-01   Ready    <none>          5h13m   v1.36.1   10.129.0.20   <none>        Ubuntu 24.04.4 LTS   6.8.0-124-generic (amd64)   containerd://2.2.1
+k8s-worker-02   Ready    <none>          5h12m   v1.36.1   10.129.0.34   <none>        Ubuntu 24.04.4 LTS   6.8.0-124-generic (amd64)   containerd://2.2.1
+k8s-worker-03   Ready    <none>          5h11m   v1.36.1   10.129.0.22   <none>        Ubuntu 24.04.4 LTS   6.8.0-124-generic (amd64)   containerd://2.2.1
+```
